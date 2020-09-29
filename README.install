@@ -1,0 +1,22 @@
+[rocs]skvm$ export SVM_HOME=$PWD
+[rocs]skvm$ export SVM=true
+[rocs]skvm$ export DEBUG=true
+[rocs]skvm$ make -C cldc1.0.3/build/linux
+[rocs]skvm$ cldc1.0.3/kvm/VmUnix/build/kvm_g
+[rocs]skvm$ javac -g -d BCEL/classes `find BCEL -name '*.java'`
+[rocs]skvm$ javac -g -d SVMTools/classes -classpath BCEL/classes `find SVMTools -name '*.java'`
+[rocs]skvm$ chmod +x SVMTools/bin/svmtool
+[rocs]skvm$ export PATH=$PATH:$SVM_HOME/SVMTools/bin
+[rocs]skvm$ svmtool Wobulator -batch cldc1.0.3/api/cldc.batch -cp cldc1.0.3/api/classes -storepass 123456 -keystore cldc1.0.3/api/cldc.keystore -d cldc1.0.3/api/wobulated
+java -cp /home/dougxc/skvm/SVMTools/classes:/home/dougxc/skvm/BCEL/classes svmtools.Wobulator -batch cldc1.0.3/api/svm/cldc.batch -cp cldc1.0.3/api/classes -storepass 123456 -keystore cldc1.0.3/api/svm/cldc.keystore -d cldc1.0.3/api/wobulated
+[rocs]skvm$ javac -d safeway/tmpclasses -classpath cldc1.0.3/api/wobulated `find safeway/src -name '*.java'`
+[rocs]skvm$ cldc1.0.3/tools/preverifier/build/linux/preverify -classpath cldc1.0.3/api/wobulated -d safeway/classes safeway/tmpclasses
+[rocs]skvm$ svmtool Wobulator -batch safeway/safeway.batch -keystore cldc1.0.3/api/cldc.keystore -d safeway/wobulated -cp safeway/classes -storepass 123456
+[rocs]skvm$ svmtool PermitTool -sign -keystore cldc1.0.3/api/cldc.keystore -storepass 123456 -db safeway/ual.pdb -cp safeway/classes @safeway/ual.req
+Enter password for alias 'cldc_cra' or press return to use keystore password: 
+Enter password for alias 'cldc_subclass' or press return to use keystore password: 
+6 permits written to database (/usr/local/export/skvm/ual.pdb)
+[rocs]skvm$ svmtool Wobulator -batch safeway/ual.batch -db safeway/ual.pdb -keystore safeway/ual.keystore -d safeway/wobulated -cp safeway/classes -storepass 123456
+[rocs]skvm$ cldc1.0.3/kvm/VmUnix/build/kvm_g -tracesvm -classpath safeway/wobulated:cldc1.0.3/api/wobulated -heapsize 2M com.safeway.PaymentManager
+[rocs]skvm$ 
+

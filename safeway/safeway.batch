@@ -1,0 +1,19 @@
+#
+# This is a sample specification for how a platform owner's classes could be
+# configured (i.e. "wobulated") for deployment with the SVM. Given that
+# these classes are deployed with the CLDC classes by the platform owner,
+# there are put into the same domain as the CLDC classes.
+#
+
+template safeway_platform_classes {
+  subclass_key="cldc_subclass"
+  class_resource_access_key="cldc_cra"
+  primary_domain_key="cldc_domain"
+  default_field_accessibility="false"
+  default_method_accessibility="false"
+}
+
+class com.safeway.Payment : safeway_platform_classes {}
+class com.safeway.PaymentManager : safeway_platform_classes {}
+class com.safeway.PaymentPlugin : safeway_platform_classes {}
+class com.safeway.PaymentPluginManager : safeway_platform_classes {}

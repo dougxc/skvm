@@ -1,0 +1,218 @@
+TOP=../../..
+include $(TOP)/build/Makefile.inc
+
+ifeq ($(PLATFORM), linux)
+  export XPM=true
+  export GCC=true
+endif
+
+ifeq ($(DEBUG), true)
+   g = _g
+else
+   g =
+endif
+
+j =
+
+ifeq ($(XPM), true)
+  CLEANUPXPM =  .includexpm$(j)$(g)
+else
+  CLEANUPXPM =  .noincludexpm$(j)$(g)
+endif
+
+ifeq ($(DEBUG_COLLECTOR), true)
+COLLECTOR = collectorDebug.c
+else
+COLLECTOR = collector.c
+endif
+
+SRCFILES  = cache.c class.c fields.c frame.c garbage.c $(COLLECTOR)   \
+            global.c interpret.c execute.c loader.c main.c native.c   \
+            property.c thread.c nativeCore.c loaderFile.c hashtable.c \
+            verifier.c log.c jar.c inflate.c  stackmap.c profiling.c  \
+	    pool.c runtime_md.c StartJVM.c                            \
+	    nativeFunctionTableUnix.c events.c resource.c             \
+	    verifierUtil.c fp_math.c
+
+ifeq ($(DEBUG), true)
+   SRCFILES += debugger.c debuggerSocketIO.c debuggerOutputStream.c debuggerInputStream.c
+   OTHER_FLAGS += -DENABLE_JAVA_DEBUGGER=1
+else
+   OTHER_FLAGS += -DENABLE_JAVA_DEBUGGER=0
+endif
+
+ifeq ($(USE_JAM), true)
+   OTHER_FLAGS += -DUSE_JAM=1
+   SRCFILES += jam.c jamParse.c jamHttp.c jamStorage.c
+   j = _j
+else
+
+endif
+
+ifeq ($(ROMIZING), false) 
+   ROMFLAGS = -DROMIZING=0
+else
+   SRCFILES += ROMjavaUnix.c
+endif
+
+all: kvm$(j)$(g)
+
+OBJFILES = $(patsubst %.c,obj$(j)$(g)/%.o,$(SRCFILES))
+
+vpath %.c  $(TOP)/kvm/VmCommon/src/ $(TOP)/kvm/VmUnix/src/ \
+           $(TOP)/kvm/VmExtra/src/ $(TOP)/tools/jcc/ $(TOP)/jam/src \
+           $(TOP)/kvm/VmExtra/src/sarm
+
+vpath %.S  $(TOP)/kvm/VmExtra/src/sarm
+
+ifeq ($(PLATFORM), solaris)
+LIBS =    -lXt -lX11 -lm -lsocket -lnsl
+CPPFLAGS = -DUNIX -DSOLARIS -D$(ARCH) \
+	   -I$(TOP)/kvm/VmExtra/h -I$(TOP)/kvm/VmCommon/h \
+	   -I$(TOP)/kvm/VmUnix/h -I$(TOP)/jam/h -I$(TOP)/kvm/VmCommon/src
+
+XWINFLAGS =  -I/usr/openwin/include
+endif
+
+ifeq ($(PLATFORM), linux)
+LIBS =    -L/usr/X11R6/lib -lXt -lX11 -lm -lnsl -lICE -lSM
+CPPFLAGS = -DUNIX -DLINUX -D$(ARCH) \
+	   -I$(TOP)/kvm/VmCommon/h -I$(TOP)/kvm/VmUnix/h \
+	   -I$(TOP)/kvm/VmExtra/h -I$(TOP)/jam/h
+XWINFLAGS =  -I/usr/X11R6/include
+endif
+
+ifeq ($(XPM), true)
+    LIBS += -lXpm
+    XWINFLAGS += -I/usr/local/include -DUSE_XPM=1
+    XPM_BITMAPS = blank.xpm
+endif
+
+ifeq ($(GCC), true)
+   CC = gcc
+   CFLAGS =  -Wall $(CPPFLAGS) $(ROMFLAGS) $(OTHER_FLAGS)
+   DEBUG_FLAG = -g 
+   OPTIMIZE_FLAG = -O2
+else 
+   CC = cc
+   CFLAGS = -Xa $(CPPFLAGS) $(ROMFLAGS) $(OTHER_FLAGS)
+   DEBUG_FLAG = -g -xsb
+   OPTIMIZE_FLAG = -xO2
+endif
+
+DEBUG_FLAG += -DINCLUDEDEBUGCODE=1 
+
+$(TOP)/tools/jcc/ROMjavaUnix.c $(TOP)/tools/jcc/nativeFunctionTableUnix.c: jccUnix
+
+.PHONY:  jccUnix
+jccUnix: 
+	@(cd $(TOP)/tools/jcc; $(MAKE) unix)       
+
+ifeq ($(ASM_INTERPRETER), true)
+   OBJFILES += obj$(j)$(g)/FastInterpret7.o
+   OBJFILES += obj$(j)$(g)/FastInterpretAux.o
+   CPPFLAGS += -DALTERNATIVE_FAST_INTERPRETER
+endif
+
+kvm$(j)$(g): obj$j$g/ $(CLEANUPXPM) $(OBJFILES)
+	@echo "Linking ... $@"
+	@$(CC) $(OBJFILES) -o $@ $(LIBS)
+
+clean: 
+	rm -rf core kvm* .noincludexpm* ./obj* ./SunWS_cache .sb
+	rm -rf $(TOP)/tools/jcc/ROMjavaUnix.c $(TOP)/tools/jcc/nativeFunctionTableUnix.c
+
+obj$(j)$g/execute.o : execute.c bytecodes.c 
+
+obj$(j)/%.o: %.c
+		@echo "... $@"
+		@$(CC) $(EXTRACFLAGS) $(CFLAGS) $(XWINFLAGS) $(OPTIMIZE_FLAG) -c -o $@ $<
+
+obj$(j)_g/%.o: %.c
+		@echo "... $@"
+		@$(CC) $(EXTRACFLAGS) $(CFLAGS) $(XWINFLAGS) $(DEBUG_FLAG) -c -o $@ $<
+
+obj$j$g/:
+		mkdir -p $@
+
+obj$j$g/FastInterpret7.o: FastInterpret.S offsets.h
+	@echo "... $@"
+	$(CC) -DARM7=1 $(CPPFLAGS) -c -I . -o $@ $<
+
+obj$j$g/FastInterpret9.o: FastInterpret.S offsets.h
+	@echo "... $@"
+	$(CC) -DARM7=1 $(CPPFLAGS) -c -I . -o $@ $<
+
+FastInterpret7.masm FastInterpret9.masm: FastInterpret.S offsets.h .FORCE
+	@echo $(patsubst FastInterpret%.masm,-DARM%,$@)
+	@echo "... $@"
+	@$(CC) -DMASM $(patsubst FastInterpret%.masm,-DARM%,$@) -E -I ../../VmCommon/h -I . $< \
+        | perl  -e '$$_ = ";". join(";", <STDIN>);'                      \
+                -e 's/(\D):\//\1\//g;         #no : after drive letter'  \
+                -e 's/:/;/g; s/\n//g;'                                   \
+	        -e '# Make the actual changes that are required'         \
+                -e 's/\.word/DCD/g;'                                     \
+                -e 's/\.ascii/DCB/g;'                                    \
+                -e 's/\.asciz([^;]*);/DCB \1;\t.byte 0;/g;'              \
+                -e 's/\.byte/DCB/g;'                                     \
+	        -e 's/\.align/align/g;'                                  \
+	        -e 's/\.extern/IMPORT/g;'                                \
+                -e 's/\$$/#/g;                #Constants use hash sign'  \
+                -e 's/([1-9])([bf])/%\2\1/g;  #Format of local labels'   \
+                -e 's/adrl(\w\w)/adr\1l/g;    #adrlxx -> adrxxl'         \
+	        -e 's/;(#[^;]*;)+/;/g;        #preprocessor junk'        \
+                -e '# These are purely for beautifying the code'         \
+	        -e 's/;(\s*;)+/;/g;           #remove blank lines'       \
+	        -e 's/\s*,\s*/, /g;           #spacing around commas'    \
+		-e 's/;\s+(\w+)\s+/;\t\1\t/g; #tabs before, after opcode'\
+                -e 's/;\s+(\d+);/;\1;/g;      #no space before tmp labels'\
+		-e 's/\s+([!\}\]])/\1/g;      #no space before !}]'      \
+		-e 's/([!\{\[#])\s+/\1/g;     #no space after !{[#'      \
+                -e '# This is required again.  Make ; into newlines'     \
+	        -e 's/;/\n/g; print'                                     \
+                > $@	
+offsets.h:     makeOffsets
+	makeOffsets > offsets.h
+
+makeOffsets:	makeOffsets.c
+	cc $(CPPFLAGS) -o $@ $<
+
+.includexpm$(j)$(g):
+		@if [ ! -f .includexpm$(j)$(g) ]; then \
+		    touch .includexpm$(j)$(g); \
+		    rm -f .noincludexpm$(j)$(g); \
+		    rm -rf obj$(j)$(g)/nativeGraphics.o; \
+		fi
+
+.noincludexpm$(j)$(g):
+		@if [ ! -f .noincludexpm$(j)$(g) ]; then \
+		    touch .noincludexpm$(j)$(g); \
+		    rm -f .includexpm$(j)$(g); \
+		    rm -rf obj$(j)$(g)/nativeGraphics.o; \
+		fi
+ifeq ($(GCC), true)
+
+%.i: %.c .FORCE
+	echo $(CC)
+	$(CC) $(CFLAGS) $(OPTIMIZE_FLAG) -E -o $@ $<
+
+else 
+
+%.i: %.c .FORCE
+	echo $(CC)
+	$(CC) $(CFLAGS) $(OPTIMIZE_FLAG) -E $< > $@
+
+endif
+
+%.s: %.c .FORCE
+	@echo "... $@"
+	@$(CC) $(CFLAGS) $(OPTIMIZE_FLAG) -S -o $@ $<
+
+regression:
+	CLASSPATH=../../../api/classes:../../../samples/classes kvm tests.RegressionTest
+
+.FORCE:
+
+foobar7.o: .FORCE
+
+

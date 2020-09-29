@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+  <!--JBuilder Library Definition File-->
+  <fullname>bcel</fullname>
+  <class>
+    <path>../../BCEL/classes</path>
+  </class>
+  <source>
+    <path>../../BCEL/src</path>
+  </source>
+  <lastmodsaved>1105754340193</lastmodsaved>
+</library>

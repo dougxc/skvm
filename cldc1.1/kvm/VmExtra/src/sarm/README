@@ -1,0 +1,177 @@
+Following are instructions for building the KVM using the ARM Fast
+Interpreter Loop.
+
+In addition to the normal files in the build, you will need the following
+three file in <workspace>/kvm/VmExtra/src/sarm/
+    FastInterpret.S
+    FastIntepretAux.c
+    makeOffsets.c
+
+A Makefile in <workspace>/kvm/VmUnix/build
+    Makefile.arm
+has been provided, which includes all of the changes described below,
+conditionalized on the flag ASM_INTERPRETER=true.  Hence you would type
+    gnumake -f Makefile.arm ASM_INTERPRETER=true <other flags....>
+in the build directory to create the kvm image.
+
+        Note:  The current Makefile targets the ARM9/StrongArm (see below).
+        You must change line that adds FastInterpret9.o to the list of
+        object files to instead add FastInterpret7.o.  This is described in
+        greater detail below.   
+
+Note that even though the assembly-language interpreter loop can be used
+when building a "debugging" kvm, the interpreter loop does not support all
+of the tracing flags.  In particular, setting the following flags will
+either have no affect, or will not print complete information:
+      
+      -tracebytecodes
+      -tracemethods            
+      -tracemethodsverbose     
+      -traceframes
+
+The included Makefile can be used on Unix systems.  The rest of this
+document explains the additions that have been made and how you would change
+your build script if you were using a system other than GNUmake.
+
+You must change your build script do perform the following additional steps:
+
+   Step 1) Add FastInterpretAux.c to the list of files that are compiled
+      and linked to create the kvm image
+
+   Step 2) Add the additional flag -DALTERNATIVE_FAST_INTERPRETER to the flags
+      used to compile the .c files.   Compile all the kvm .c files to
+      produce object files
+
+   Step 3) Use the program makeOffsets.c to generate the file offsets.h in
+      the build directory.  
+
+   Step 4) Either assemble the program FastInterpret.S directly, or convert it 
+      into the file FastInterpret.masm, and assemble it.
+
+   Step 5) Link together the object files produced in Step 3 and Step 5 to
+      generate the kvm
+
+The text below shows the changes that need to be made to the GNUMakefile
+for each of the steps above.  This will indicate the similar steps that
+need to be made to non-GNUMake based systems.
+
+============================================================
+
+Step 0) 
+You need to indicate a new directory for .c and .S files
+You should add 
+     $(TOP)/kvm/VmExtra/src/sarm
+to the "vpath %.c" line, and also add the line
+     vpath %.S  $(TOP)/kvm/VmExtra/src/sarm
+to indicate the location of the .S file
+
+Step 1 and 5) 
+
+You must decide whether your target device is an ARM7 or a StrongARM.  Code
+targeted for the ARM7 will run on the StrongARM, and vice versa.  However
+the code sequences have been optimized based on the timing characteristics
+of the particular type of hardware.
+
+[Note: In FastInterpret.S, the two options are called ARM7 and ARM9.  The
+StrongArm and the ARM9 timings are very similar, but not identical.  In all
+cases in which a code sequence could be optimized for either the ARM9 or
+the StrongARM, the sequence that best suited the StrongARM was used.]
+
+After the line:
+   OBJFILES = $(patsubst %.c,obj$(j)$(g)/%.o,$(SRCFILES)) 
+
+you should add >>one<< of the following two lines to you Makefile
+
+   OBJFILES += obj$(j)$(g)/FastInterpret7.o obj$(j)$(g)/FastInterpretAux.o
+   OBJFILES += obj$(j)$(g)/FastInterpret9.o obj$(j)$(g)/FastInterpretAux.o
+
+Use the first if you are targeting the ARM7.  Use the second if you are
+targeting the ARM9 or the StrongARM.
+
+
+Step 2) 
+
+You should add the line
+   OTHER_FLAGS += -DALTERNATIVE_FAST_INTERPRETER
+the the make file.
+
+Step 3) 
+
+The following lines should be added to the makefile
+
+     offsets.h:     makeOffsets
+	     makeOffsets > offsets.h
+
+     makeOffsets:	makeOffsets.c
+	     cc $(CPPFLAGS) -o $@ $<
+
+Note that there must be a <tab> after each of the two colons.  
+offsets.h is a generated file which lets the assembly language know the
+size of KVM's various data structures, and the offsets, size and
+signed/unsigned-ness of each of the files in the data structure.
+
+Step 4)
+
+If you are using a gnu assembler, than this process is relatively
+straightforward.  If you are using masm, the process is a little bit
+trickier.
+
+If you are using the gnu compiler, then the .S file can be compiled using gcc:
+You need to add the following lines to the make file to indicate how to
+generate the object file.  Note that either FastInterpret7.o or
+FastInterpret9.o can be generated, depending on a preprocessor flag
+
+    obj$j$g/FastInterpret7.o: FastInterpret.S offsets.h
+	    @echo "... $@"
+	    $(CC) $(CPPFLAGS) -DARM7 -c -I . -o $@ $<
+
+    obj$j$g/FastInterpret9.o: FastInterpret.S offsets.h
+	    @echo "... $@"
+	    $(CC) $(CPPFLAGS) -DARM9 -c -I . -o $@ $<
+
+There was a recent change to the gnu assembler: The opcode that used to
+be called "adrlne" is no called "adrnel".  If you are using an old
+assembler, you will get an error in MONITORENTER.  Set the flag
+-DUSING_OLD_GCC_COMPILER to get this code to assembly correctly.
+
+If you are using a masm-like compiler, then you must translate the file
+from gcc-like assembly language syntax to masm-like assembly language
+syntax.  This is done by running the code through the C preprocessor
+setting -DMASM and either -DARM7 or -DARM9, and then sending the result
+through a rather convoluted perl script.
+
+The enclosed Makefile contains the code necessary to convert the the .S
+file to a .masm file.
+
+You may still run into some difficulties when attempting to assemble the
+.masm file.  There seems to be a wide range of requirements among compilers
+and linkers as to the format of the header line.  You may need to edit this
+line by hand.  The line that is included is
+        AREA   text, CODE, READONLY  
+        EXPORT FastInterpret
+If this does not work, you may want to try one of the following
+        AREA   .text, CODE, READONLY  
+        EXPORT FastInterpret
+or 
+        AREA   FastInterpret, CODE, READONLY  
+
+If none of these seem to work, see if your C compiler has the option to
+generate assembly language code.  Create a small function 
+    void foo() {}
+and then see what the generated assembly language code has at the top of
+it.
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+

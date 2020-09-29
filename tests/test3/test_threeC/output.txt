@@ -1,0 +1,75 @@
+Verifying subclass privileges for: java/lang/Class
+Verifying subclass privileges for: java/lang/String
+Verifying subclass privileges for: java/lang/System
+Verifying subclass privileges for: java/lang/Runnable
+Verifying subclass privileges for: java/lang/Thread
+Verifying subclass privileges for: java/lang/Throwable
+Verifying subclass privileges for: java/lang/Error
+Verifying subclass privileges for: java/lang/VirtualMachineError
+Verifying subclass privileges for: java/lang/OutOfMemoryError
+Verifying subclass privileges for: java/lang/StackOverflowError
+Verifying subclass privileges for: Q/Y
+Verifying subclass privileges for: java/lang/Exception
+Verifying subclass privileges for: java/io/IOException
+Verifying subclass privileges for: java/lang/RuntimeException
+Verifying subclass privileges for: java/lang/NullPointerException
+Verifying subclass privileges for: java/lang/IllegalArgumentException
+Verifying subclass privileges for: java/lang/IndexOutOfBoundsException
+Verifying subclass privileges for: java/lang/StringIndexOutOfBoundsException
+Verifying subclass privileges for: javax/microedition/io/Connector
+Verifying class resource access: java/lang/System -> javax/microedition/io/Connector
+Verifying subclass privileges for: java/lang/ClassNotFoundException
+Verifying subclass privileges for: javax/microedition/io/ConnectionNotFoundException
+Verifying subclass privileges for: java/lang/InstantiationException
+Verifying subclass privileges for: java/lang/IllegalAccessException
+Verifying subclass privileges for: java/lang/ClassCastException
+Verifying subclass privileges for: javax/microedition/io/Connection
+Verifying subclass privileges for: javax/microedition/io/InputConnection
+Verifying subclass privileges for: javax/microedition/io/OutputConnection
+Verifying subclass privileges for: java/io/InputStream
+Verifying subclass privileges for: java/io/DataInput
+Verifying subclass privileges for: java/io/DataInputStream
+Verifying subclass privileges for: java/io/OutputStream
+Verifying subclass privileges for: java/io/DataOutput
+Verifying subclass privileges for: java/io/DataOutputStream
+Verifying class resource access: javax/microedition/io/Connector -> java/lang/System
+Verifying subclass privileges for: java/lang/StringBuffer
+Verifying class resource access: javax/microedition/io/Connector -> java/lang/StringBuffer
+Verifying class resource access: javax/microedition/io/Connector -> java/lang/Class
+Verifying subclass privileges for: com/sun/cldc/io/GeneralBase
+Verifying subclass privileges for: com/sun/cldc/io/ConnectionBaseInterface
+Verifying subclass privileges for: com/sun/cldc/io/ConnectionBase
+Verifying subclass privileges for: com/sun/cldc/io/j2me/debug/Protocol
+Verifying subclass privileges for: com/sun/cldc/io/j2me/debug/PrivateOutputStream
+Verifying subclass privileges for: java/io/UTFDataFormatException
+Verifying subclass privileges for: java/io/EOFException
+Verifying reflection class resource access: javax/microedition/io/Connector -> com/sun/cldc/io/j2me/debug/Protocol
+Verifying class resource access: com/sun/cldc/io/j2me/debug/Protocol -> com/sun/cldc/io/j2me/debug/PrivateOutputStream
+Verifying class resource access: com/sun/cldc/io/ConnectionBase -> java/io/DataOutputStream
+Verifying subclass privileges for: java/io/PrintStream
+Verifying subclass privileges for: java/io/Writer
+Verifying subclass privileges for: java/io/OutputStreamWriter
+Verifying class resource access: java/lang/System -> java/io/PrintStream
+Verifying class resource access: java/io/PrintStream -> java/io/OutputStreamWriter
+Verifying subclass privileges for: com/sun/cldc/i18n/Helper
+Verifying class resource access: java/io/OutputStreamWriter -> com/sun/cldc/i18n/Helper
+Verifying subclass privileges for: java/io/UnsupportedEncodingException
+Verifying subclass privileges for: java/io/ByteArrayInputStream
+Verifying subclass privileges for: java/io/Reader
+Verifying subclass privileges for: com/sun/cldc/i18n/StreamReader
+Verifying subclass privileges for: java/io/ByteArrayOutputStream
+Verifying subclass privileges for: com/sun/cldc/i18n/StreamWriter
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/System
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/StringBuffer
+Verifying subclass privileges for: java/lang/Character
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/Character
+Verifying class resource access: java/lang/Character -> java/lang/System
+Verifying class resource access: java/lang/Character -> java/lang/Class
+Verifying subclass privileges for: com/sun/cldc/i18n/uclc/DefaultCaseConverter
+Verifying reflection class resource access: java/lang/Character -> com/sun/cldc/i18n/uclc/DefaultCaseConverter
+Verifying class resource access: java/lang/Character -> com/sun/cldc/i18n/uclc/DefaultCaseConverter
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/Class
+Verifying subclass privileges for: com/sun/cldc/i18n/j2me/ISO8859_1_Writer
+Verifying reflection class resource access: com/sun/cldc/i18n/Helper -> com/sun/cldc/i18n/j2me/ISO8859_1_Writer
+Verifying subclass privileges for: P/X
+Verifying permit: P/X -> java/lang/Object

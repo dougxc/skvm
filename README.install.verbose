@@ -1,0 +1,347 @@
+[rocs]skvm$ export SVM_HOME=$PWD
+[rocs]skvm$ export SVM=true
+[rocs]skvm$ export DEBUG=true
+[rocs]skvm$ make -C cldc1.0.3/build/linux
+>>>Recursively making ../../tools/preverifier/build/linux all...
+make[1]: Entering directory `/home/dougxc/skvm/cldc1.0.3/tools/preverifier/build/linux'
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/check_class.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/main.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/utf.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/check_code.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/convert_md.c
+../../src/convert_md.c: In function `native2utf8':
+../../src/convert_md.c:74: warning: passing arg 2 of `iconv' from incompatible pointer type
+../../src/convert_md.c: In function `utf2native':
+../../src/convert_md.c:90: warning: passing arg 2 of `iconv' from incompatible pointer type
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/util.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/jar.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/jar_support.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/classloader.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/file.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/classresolver.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/stubs.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/inlinejsr.c
+gcc -c -I../../src -DUNIX -DLINUX -DJAVAVERIFY -DTRIMMED -Di386  -g  ../../src/sys_support.c
+../../src/sys_support.c:330:8: warning: extra tokens at end of #endif directive
+gcc  -o preverify check_class.o main.o utf.o check_code.o convert_md.o util.o jar.o jar_support.o classloader.o file.o classresolver.o stubs.o inlinejsr.o sys_support.o
+make[1]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/tools/preverifier/build/linux'
+<<<Finished Recursively making ../../tools/preverifier/build/linux all.
+>>>Recursively making ../../api all...
+make[1]: Entering directory `/home/dougxc/skvm/cldc1.0.3/api'
+javac -g -d tmpclasses -bootclasspath classes -classpath classes src/com/dcrypt/Audio.java src/com/dcrypt/Melp.java src/com/dcrypt/UART.java src/com/dcrypt/UART1.java src/com/dcrypt/UART5.java src/com/sun/cldc/i18n/Helper.java src/com/sun/cldc/i18n/StreamReader.java src/com/sun/cldc/i18n/StreamWriter.java src/com/sun/cldc/i18n/j2me/ISO8859_1_Reader.java src/com/sun/cldc/i18n/j2me/ISO8859_1_Writer.java src/com/sun/cldc/i18n/uclc/DefaultCaseConverter.java src/com/sun/cldc/io/ConnectionBase.java src/com/sun/cldc/io/ConnectionBaseInterface.java src/com/sun/cldc/io/DateParser.java src/com/sun/cldc/io/GeneralBase.java src/com/sun/cldc/io/NetworkConnectionBase.java src/com/sun/cldc/io/connections/HttpConnection.java src/com/sun/cldc/io/j2me/comm/Protocol.java src/com/sun/cldc/io/j2me/datagram/DatagramObject.java src/com/sun/cldc/io/j2me/datagram/Protocol.java src/com/sun/cldc/io/j2me/debug/Protocol.java src/com/sun/cldc/io/j2me/events/Protocol.java src/com/sun/cldc/io/j2me/http/Protocol.java src/com/sun/cldc/io/j2me/resource/Protocol.java src/com/sun/cldc/io/j2me/serversocket/Protocol.java src/com/sun/cldc/io/j2me/socket/Protocol.java src/com/sun/cldc/io/palm/comm/Protocol.java src/com/sun/cldc/io/palm/http/Inet.java src/com/sun/cldc/io/palm/http/InetException.java src/com/sun/cldc/io/palm/http/Protocol.java src/com/sun/cldc/io/palm/https/Protocol.java src/com/sun/cldc/util/TimeZoneImplementation.java src/com/sun/cldc/util/j2me/CalendarImpl.java src/com/sun/cldc/util/j2me/TimeZoneImpl.java src/com/sun/kjava/Bitmap.java src/com/sun/kjava/Button.java src/com/sun/kjava/Caret.java src/com/sun/kjava/CheckBox.java src/com/sun/kjava/Database.java src/com/sun/kjava/Dialog.java src/com/sun/kjava/DialogOwner.java src/com/sun/kjava/Graphics.java src/com/sun/kjava/HelpDisplay.java src/com/sun/kjava/IntVector.java src/com/sun/kjava/List.java src/com/sun/kjava/RadioButton.java src/com/sun/kjava/RadioGroup.java src/com/sun/kjava/ScrollOwner.java src/com/sun/kjava/ScrollTextArea.java src/com/sun/kjava/ScrollTextBox.java src/com/sun/kjava/SelectScrollTextBox.java src/com/sun/kjava/Slider.java src/com/sun/kjava/Spotlet.java src/com/sun/kjava/TextBox.java src/com/sun/kjava/TextField.java src/com/sun/kjava/VerticalScrollBar.java src/java/io/ByteArrayInputStream.java src/java/io/ByteArrayOutputStream.java src/java/io/DataInput.java src/java/io/DataInputStream.java src/java/io/DataOutput.java src/java/io/DataOutputStream.java src/java/io/EOFException.java src/java/io/IOException.java src/java/io/InputStream.java src/java/io/InputStreamReader.java src/java/io/InterruptedIOException.java src/java/io/OutputStream.java src/java/io/OutputStreamWriter.java src/java/io/PrintStream.java src/java/io/Reader.java src/java/io/UTFDataFormatException.java src/java/io/UnsupportedEncodingException.java src/java/io/Writer.java src/java/lang/AbstractMethodError.java src/java/lang/ArithmeticException.java src/java/lang/ArrayIndexOutOfBoundsException.java src/java/lang/ArrayStoreException.java src/java/lang/Boolean.java src/java/lang/Byte.java src/java/lang/Character.java src/java/lang/Class.java src/java/lang/ClassCastException.java src/java/lang/ClassCircularityError.java src/java/lang/ClassFormatError.java src/java/lang/ClassNotFoundException.java src/java/lang/Error.java src/java/lang/Exception.java src/java/lang/ExceptionInInitializerError.java src/java/lang/IllegalAccessError.java src/java/lang/IllegalAccessException.java src/java/lang/IllegalArgumentException.java src/java/lang/IllegalMonitorStateException.java src/java/lang/IllegalThreadStateException.java src/java/lang/IncompatibleClassChangeError.java src/java/lang/IndexOutOfBoundsException.java src/java/lang/InstantiationError.java src/java/lang/InstantiationException.java src/java/lang/Integer.java src/java/lang/InterruptedException.java src/java/lang/LinkageError.java src/java/lang/Long.java src/java/lang/Math.java src/java/lang/NegativeArraySizeException.java src/java/lang/NoClassDefFoundError.java src/java/lang/NoSuchFieldError.java src/java/lang/NoSuchMethodError.java src/java/lang/NullPointerException.java src/java/lang/NumberFormatException.java src/java/lang/Object.java src/java/lang/OutOfMemoryError.java src/java/lang/Runnable.java src/java/lang/Runtime.java src/java/lang/RuntimeException.java src/java/lang/SecurityException.java src/java/lang/Short.java src/java/lang/StackOverflowError.java src/java/lang/String.java src/java/lang/StringBuffer.java src/java/lang/StringIndexOutOfBoundsException.java src/java/lang/System.java src/java/lang/Thread.java src/java/lang/Throwable.java src/java/lang/UnsatisfiedLinkError.java src/java/lang/UnsupportedClassVersionError.java src/java/lang/VerifyError.java src/java/lang/VirtualMachineError.java src/java/util/Calendar.java src/java/util/Date.java src/java/util/EmptyStackException.java src/java/util/Enumeration.java src/java/util/Hashtable.java src/java/util/NoSuchElementException.java src/java/util/Random.java src/java/util/Stack.java src/java/util/TimeZone.java src/java/util/Vector.java src/javax/microedition/cbs/CBSError.java src/javax/microedition/cbs/IllegalClassResourceAccessError.java src/javax/microedition/cbs/IllegalDomainError.java src/javax/microedition/cbs/IllegalSubclassError.java src/javax/microedition/cbs/TrustedClassFormatError.java src/javax/microedition/cbs/TrustedLoader.java src/javax/microedition/io/Connection.java src/javax/microedition/io/ConnectionNotFoundException.java src/javax/microedition/io/Connector.java src/javax/microedition/io/ContentConnection.java src/javax/microedition/io/Datagram.java src/javax/microedition/io/DatagramConnection.java src/javax/microedition/io/InputConnection.java src/javax/microedition/io/OutputConnection.java src/javax/microedition/io/StreamConnection.java src/javax/microedition/io/StreamConnectionNotifier.java
+../tools/preverifier/build/linux/preverify -d classes tmpclasses
+make[1]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/api'
+<<<Finished Recursively making ../../api all.
+>>>Recursively making ../../samples all...
+make[1]: Entering directory `/home/dougxc/skvm/cldc1.0.3/samples'
+javac -g -d tmpclasses -classpath tmpclasses:../api/classes -bootclasspath ../api/classes src/HelloWorld.java src/bubble/BubbleApplet.java src/bubble/BubbleClient.java src/bubble/BubbleSpotlet.java src/commTest/CommTest.java src/commTest/CommTest2.java src/commTest/CommTest3.java src/dots/Average.java src/dots/DotGame.java src/dots/PenTaps.java src/dots/Random.java src/dots/TopDown.java src/dragon/Dragon.java src/dragon/OneDragon.java src/dragon/ValueSelector.java src/eightQueens/EightQueenBoard.java src/eightQueens/EightQueens.java src/hanoiTowers/HanoiTowers.java src/manyBalls/ManyBalls.java src/manyBalls/SmallBall.java src/midi/PalmMidi.java src/midi/PalmPiano.java src/missiles/Bomb.java src/missiles/GameBitmap.java src/missiles/GamePiece.java src/missiles/Launcher.java src/missiles/Missile.java src/missiles/Missiles.java src/missiles/Missiles2.java src/missiles/ShipLg.java src/missiles/ShipMd.java src/missiles/ShipSm.java src/missiles/ShipXL.java src/pong/Pong.java src/pong/PongBall.java src/scribble/Ball.java src/scribble/Scribble.java src/starCruiser/MovingStar.java src/starCruiser/StarCruiser.java src/tests/BaseTest.java src/tests/ConnectionTest.java src/tests/DatagramTest.java src/tests/KvmHttpTest.java src/tests/ReaderWriterTest.java src/tests/RegressionTest.java src/tests/SocketTest.java src/tests/StringI18NTest.java src/tests/TestCalendar.java src/threeDLogo/ThreeDLogo.java src/threeDLogo/ThreeDeeObject.java src/threeDLogo/Trigonometric.java src/ui/UITest.java
+../tools/preverifier/build/linux/preverify -d classes -classpath ../api/classes tmpclasses
+make[1]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/samples'
+<<<Finished Recursively making ../../samples all.
+>>>Recursively making ../../samples/jam all...
+make[1]: Entering directory `/home/dougxc/skvm/cldc1.0.3/samples/jam'
+rm -rf tmpclasses1
+rm -rf tmpclasses2
+assekdir tmpclasses1
+mkdir tmpclasses2
+javac -d tmpclasses1 -bootclasspath ../../api/classes src/HelloWorld.java
+../../tools/preverifier/build/linux/preverify -classpath ../../api/classes -d tmpclasses2 tmpclasses1
+cd tmpclasses2; jar cvf ../HelloWorld.jar .; cd ..
+added manifest
+adding: HelloWorld.class(in = 447) (out= 302)(deflated 32%)
+sed "s/%%JarSize%%/    771 /" src/HelloWorld.jam.template > HelloWorld.jam
+make[1]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/samples/jam'
+<<<Finished Recursively making ../../samples/jam all.
+>>>Recursively making ../../tools/kdp all...
+make[1]: Entering directory `/home/dougxc/skvm/cldc1.0.3/tools/kdp'
+javac src/kdp/ConnectionService.java src/kdp/DebuggerListener.java src/kdp/KVMDebugProxy.java src/kdp/KVMListener.java src/kdp/Log.java src/kdp/Options.java src/kdp/Packet.java src/kdp/PacketStream.java src/kdp/ProxyListener.java src/kdp/SocketConnection.java src/kdp/VMConstants.java src/kdp/classparser/AccessFlags.java src/kdp/classparser/ClassFile.java src/kdp/classparser/ClassManager.java src/kdp/classparser/ClassParser.java src/kdp/classparser/FieldInfo.java src/kdp/classparser/FileReference.java src/kdp/classparser/MethodInfo.java src/kdp/classparser/SearchPath.java src/kdp/classparser/StringParser.java src/kdp/classparser/attributes/Attribute.java src/kdp/classparser/attributes/AttributeInfo.java src/kdp/classparser/attributes/CodeAttribute.java src/kdp/classparser/attributes/ConstantValueAttribute.java src/kdp/classparser/attributes/DeprecatedAttribute.java src/kdp/classparser/attributes/ExceptionTable.java src/kdp/classparser/attributes/ExceptionsAttribute.java src/kdp/classparser/attributes/InnerClassesAttribute.java src/kdp/classparser/attributes/InnerClassesTable.java src/kdp/classparser/attributes/LineNumberTable.java src/kdp/classparser/attributes/LineNumberTableAttribute.java src/kdp/classparser/attributes/LocalVariable.java src/kdp/classparser/attributes/LocalVariableTable.java src/kdp/classparser/attributes/LocalVariableTableAttribute.java src/kdp/classparser/attributes/SourceFileAttribute.java src/kdp/classparser/attributes/SyntheticAttribute.java src/kdp/classparser/constantpoolclasses/ConstantClassInfo.java src/kdp/classparser/constantpoolclasses/ConstantDoubleInfo.java src/kdp/classparser/constantpoolclasses/ConstantFieldrefInfo.java src/kdp/classparser/constantpoolclasses/ConstantFloatInfo.java src/kdp/classparser/constantpoolclasses/ConstantIntegerInfo.java src/kdp/classparser/constantpoolclasses/ConstantInterfaceMethodrefInfo.java src/kdp/classparser/constantpoolclasses/ConstantLongInfo.java src/kdp/classparser/constantpoolclasses/ConstantMethodrefInfo.java src/kdp/classparser/constantpoolclasses/ConstantNameAndTypeInfo.java src/kdp/classparser/constantpoolclasses/ConstantPoolInfo.java src/kdp/classparser/constantpoolclasses/ConstantStringInfo.java src/kdp/classparser/constantpoolclasses/ConstantUtf8Info.java
+make[1]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/tools/kdp'
+<<<Finished Recursively making ../../tools/kdp all.
+>>>Recursively making ../../kvm/VmUnix/build all...
+make[1]: Entering directory `/home/dougxc/skvm/cldc1.0.3/kvm/VmUnix/build'
+mkdir -p obj_g
+... obj_g/cache.o
+... obj_g/class.o
+... obj_g/fields.o
+../../../kvm/VmCommon/src/fields.c: In function `printField':
+../../../kvm/VmCommon/src/fields.c:225: warning: long unsigned int format, unsigned int arg (arg 3)
+... obj_g/frame.o
+... obj_g/garbage.o
+... obj_g/collector.o
+... obj_g/global.o
+... obj_g/interpret.o
+... obj_g/execute.o
+... obj_g/loader.o
+... obj_g/main.o
+... obj_g/native.o
+... obj_g/property.o
+... obj_g/thread.o
+... obj_g/nativeCore.o
+... obj_g/loaderFile.o
+... obj_g/hashtable.o
+... obj_g/verifier.o
+... obj_g/log.o
+... obj_g/jar.o
+... obj_g/inflate.o
+... obj_g/stackmap.o
+... obj_g/profiling.o
+... obj_g/pool.o
+... obj_g/runtime_md.o
+... obj_g/StartJVM.o
+... obj_g/fakeStaticMemory.o
+make[2]: Entering directory `/home/dougxc/skvm/cldc1.0.3/tools/jcc'
+make[3]: Entering directory `/home/dougxc/skvm/cldc1.0.3/api'
+make[3]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/api'
+... classes.zip
+cp ../../api/classes.zip classes.zip
+javac src/Const.java src/EVMConst.java src/JavaCodeCompact.java src/OpcodeConst.java src/components/Attribute.java src/components/AttributeFactory.java src/components/ClassComponent.java src/components/ClassConstant.java src/components/ClassInfo.java src/components/ClassMemberInfo.java src/components/CodeAttribute.java src/components/CodeAttributeFactory.java src/components/ConstantObject.java src/components/ConstantPool.java src/components/ConstantValueAttribute.java src/components/ConstantValueAttributeFactory.java src/components/DoubleValueConstant.java src/components/ExceptionEntry.java src/components/ExceptionsAttribute.java src/components/ExceptionsAttributeFactory.java src/components/FMIrefConstant.java src/components/FieldConstant.java src/components/FieldInfo.java src/components/InterfaceConstant.java src/components/LineNumberTableAttribute.java src/components/LineNumberTableAttributeFactory.java src/components/LineNumberTableEntry.java src/components/LocalVariableTableAttribute.java src/components/LocalVariableTableAttributeFactory.java src/components/LocalVariableTableEntry.java src/components/MethodConstant.java src/components/MethodInfo.java src/components/NameAndTypeConstant.java src/components/SingleValueConstant.java src/components/SourceFileAttribute.java src/components/StackMapAttribute.java src/components/StackMapAttributeFactory.java src/components/StackMapFrame.java src/components/StringConstant.java src/components/UnicodeConstant.java src/components/UninterpretedAttribute.java src/components/UninterpretedAttributeFactory.java src/jcc/MemberLoader.java src/jcc/MultiClass.java src/jcc/Str2ID.java src/jcc/Util.java src/runtime/CCodeWriter.java src/runtime/CStubGenerator.java src/runtime/CoreImageWriter.java src/runtime/EVMInitInfo.java src/runtime/HeaderDump.java src/runtime/KVMClassName.java src/runtime/KVMClassTable.java src/runtime/KVMHashtable.java src/runtime/KVMNameTable.java src/runtime/KVMStackMap.java src/runtime/KVMStringTable.java src/runtime/KVMWriter.java src/runtime/KVM_NATIVEWriter.java src/runtime/PALMWriter.java src/text/PI18n.java src/util/BufferedPrintStream.java src/util/ClassFile.java src/util/ClassFileConst.java src/util/ClassFileFinder.java src/util/ClassReader.java src/util/ClassnameFilter.java src/util/ClassnameFilterList.java src/util/DataFormatException.java src/util/EmptyEnumeration.java src/util/FileCompare.java src/util/LinkerUtil.java src/util/Localizer.java src/util/Set.java src/util/SignatureIterator.java src/vm/ArrayClassInfo.java src/vm/ClassClass.java src/vm/CodeHacker.java src/vm/EVMClass.java src/vm/EVMClassFactory.java src/vm/EVMMethodInfo.java src/vm/InterfaceMethodFactory.java src/vm/InterfaceMethodTable.java src/vm/InterfaceVector.java src/vm/PrimitiveClassInfo.java src/vm/StringTable.java src/vm/VMClassFactory.java src/vm/VMClassMemberInfo.java src/vm/VMConst.java src/vm/VMMethodInfo.java
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -deprecation for details.
+... classesUnix.zip
+com/sun/cldc/io/palm/http/ com/sun/cldc/io/palm/https/ com/sun/cldc/io/palm/comm/ com/dcrypt/
+make[3]: Entering directory `/home/dougxc/skvm/cldc1.0.3/tools/jcc'
+... nativeFunctionTableUnix.c
+java -classpath classes JavaCodeCompact \
+            \
+ -arch KVM_Native -o nativeFunctionTableUnix.c classesUnix.zip
+make[3]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/tools/jcc'
+make[3]: Entering directory `/home/dougxc/skvm/cldc1.0.3/tools/jcc'
+... ROMjavaUnix.c
+java -classpath classes JavaCodeCompact \
+            \
+         -arch KVM -o ROMjavaUnix.c classesUnix.zip
+177 Total Classes
+1161 method blocks
+37279 bytes of Java code
+87 catch frames
+536 field blocks
+2129 constant pool entries
+275 Java strings
+make[3]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/tools/jcc'
+make[2]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/tools/jcc'
+... obj_g/nativeFunctionTableUnix.o
+... obj_g/events.o
+... obj_g/resource.o
+... obj_g/nativeSpotlet.o
+... obj_g/nativeGraphics.o
+... obj_g/datagramProtocol.o
+... obj_g/datagramProtocol_md.o
+../../../kvm/VmUnix/src/datagramProtocol_md.c: In function `prim_com_sun_cldc_io_j2me_datagram_Protocol_getHostByAddr':
+../../../kvm/VmUnix/src/datagramProtocol_md.c:198: warning: long unsigned int format, unsigned int arg (arg 3)
+... obj_g/socketProtocol.o
+... obj_g/socketProtocol_md.o
+... obj_g/commProtocol.o
+... obj_g/commProtocol_md.o
+../../../kvm/VmUnix/src/commProtocol_md.c: In function `getLastErrorMsg':
+../../../kvm/VmUnix/src/commProtocol_md.c:394: warning: `0' flag ignored with precision specifier and `X' format
+... obj_g/debugger.o
+../../../kvm/VmExtra/src/debugger.c: In function `replaceEventOpcode':
+../../../kvm/VmExtra/src/debugger.c:1100: warning: unused variable `classID'
+... obj_g/debuggerSocketIO.o
+... obj_g/debuggerOutputStream.o
+... obj_g/debuggerInputStream.o
+... obj_g/crypto.o
+... obj_g/crypto_provider_MD5RSABasic.o
+... obj_g/cbs.o
+Linking ... kvm_g
+make[1]: Leaving directory `/home/dougxc/skvm/cldc1.0.3/kvm/VmUnix/build'
+<<<Finished Recursively making ../../kvm/VmUnix/build all.
+[rocs]skvm$ cldc1.0.3/kvm/VmUnix/build/kvm_g
+Classpath is not set. Defaulting to '.'
+ALERT: Must provide class name
+Usage: kvm <-options> <classfile>
+Options:
+  -version
+  -classpath <filepath>
+  -heapsize <size> (e.g. 65536 or 128k or 1M)
+  -debugger
+  -suspend
+  -nosuspend
+  -port <port number>
+  -traceallocation
+  -tracegc
+  -tracegcverbose
+  -traceclassloading
+  -traceclassloadingverbose
+  -traceverifier
+  -tracestackmaps
+  -tracebytecodes
+  -tracemethods
+  -tracemethodsverbose
+  -tracestackchunks
+  -traceframes
+  -traceexceptions
+  -traceevents
+  -tracemonitors
+  -tracethreading
+  -tracenetworking
+  -tracedebugger
+  -tracesvm
+  -traceall (activates all tracing options above)
+[rocs]skvm$ javac -g -d BCEL/classes `find BCEL -name '*.java'`
+[rocs]skvm$ javac -g -d SVMTools/classes -classpath BCEL/classes `find SVMTools -name '*.java'`
+[rocs]skvm$ chmod +x SVMTools/bin/svmtool
+[rocs]skvm$ export PATH=$PATH:$SVM_HOME/SVMTools/bin
+[rocs]skvm$ svmtool 
+The tools supported by the svmtool launcher are:
+
+	Wobulator
+	GenRequests
+	PermitTool
+
+To launch a given tool, provide it as the first argument to 
+the launcher. For example:
+
+	 Wobulator <args for Wobulator>
+[rocs]skvm$ svmtool Wobulator -batch cldc1.0.3/api/cldc.batch -cp cldc1.0.3/api/classes -storepass 123456 -keystore cldc1.0.3/api/cldc.keystore -d cldc1.0.3/api/wobulated
+java -cp /home/dougxc/skvm/SVMTools/classes:/home/dougxc/skvm/BCEL/classes svmtools.Wobulator -batch cldc1.0.3/api/svm/cldc.batch -cp cldc1.0.3/api/classes -storepass 123456 -keystore cldc1.0.3/api/svm/cldc.keystore -d cldc1.0.3/api/wobulated
+Warning: cannot find class com.sun.cldc.io.j2se.datagram.Protocol - skipping
+Warning: cannot find class com.sun.cldc.i18n.j2se.Default_Reader - skipping
+Warning: cannot find class com.sun.cldc.i18n.j2se.Default_Writer - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.UniversalFilterInputStream - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.http.Protocol - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.serversocket.Protocol - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.datagram.DatagramObject - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.translate.Protocol - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.socket.Protocol - skipping
+Warning: cannot find class com.sun.cldc.io.j2se.UniversalFilterOutputStream - skipping
+[rocs]skvm$ javac -d safeway/tmpclasses -classpath cldc1.0.3/api/wobulated `find safeway/src -name '*.java'`
+[rocs]skvm$ cldc1.0.3/tools/preverifier/build/linux/preverify -classpath cldc1.0.3/api/wobulated -d safeway/classes safeway/tmpclasses
+[rocs]skvm$ svmtool Wobulator -batch safeway/safeway.batch -keystore cldc1.0.3/api/cldc.keystore -d safeway/wobulated -cp safeway/classes -storepass 123456
+[rocs]skvm$ svmtool PermitTool -sign -keystore cldc1.0.3/api/cldc.keystore -storepass 123456 -db safeway/ual.pdb -cp safeway/classes @safeway/ual.req
+Enter password for alias 'cldc_cra' or press return to use keystore password: 
+Enter password for alias 'cldc_subclass' or press return to use keystore password: 
+6 permits written to database (/usr/local/export/skvm/ual.pdb)
+[rocs]skvm$ svmtool Wobulator -batch safeway/ual.batch -db safeway/ual.pdb -keystore safeway/ual.keystore -d safeway/wobulated -cp safeway/classes -storepass 123456
+[rocs]skvm$ cldc1.0.3/kvm/VmUnix/build/kvm_g -classpath safeway/wobulated:cldc1.0.3/api/wobulated -heapsize 2M com.safeway.PaymentManager
+registered com.ual.MileagePlus
+Token is processing payment of $100 to safeway on java.util.Date@f8ed4317
+Notifying com.ual.MileagePlus
+United Mileage Plus plugin notified of com.safeway.Payment@d590dbc: paid safeway $100 on java.util.Date@f8ed4317
+
+Points earned: 10
+New points total: 10
+[rocs]skvm$ cldc1.0.3/kvm/VmUnix/build/kvm_g -tracesvm -classpath safeway/wobulated:cldc1.0.3/api/wobulated -heapsize 2M com.safeway.PaymentManager
+Verifying subclass privileges for: java/lang/Class
+Verifying subclass privileges for: java/lang/String
+Verifying subclass privileges for: java/lang/System
+Verifying subclass privileges for: java/lang/Runnable
+Verifying subclass privileges for: java/lang/Thread
+Verifying subclass privileges for: java/lang/Throwable
+Verifying subclass privileges for: java/lang/Error
+Verifying subclass privileges for: java/lang/VirtualMachineError
+Verifying subclass privileges for: java/lang/OutOfMemoryError
+Verifying subclass privileges for: java/lang/StackOverflowError
+Verifying subclass privileges for: com/safeway/PaymentManager
+Verifying subclass privileges for: java/lang/Exception
+Verifying subclass privileges for: java/io/IOException
+Verifying subclass privileges for: java/lang/RuntimeException
+Verifying subclass privileges for: java/lang/NullPointerException
+Verifying subclass privileges for: java/lang/IllegalArgumentException
+Verifying subclass privileges for: java/lang/IndexOutOfBoundsException
+Verifying subclass privileges for: java/lang/StringIndexOutOfBoundsException
+Verifying subclass privileges for: javax/microedition/io/Connector
+Verifying class resource access: java/lang/System -> javax/microedition/io/Connector
+Verifying subclass privileges for: java/lang/ClassNotFoundException
+Verifying subclass privileges for: javax/microedition/io/ConnectionNotFoundException
+Verifying subclass privileges for: java/lang/InstantiationException
+Verifying subclass privileges for: java/lang/IllegalAccessException
+Verifying subclass privileges for: java/lang/ClassCastException
+Verifying subclass privileges for: javax/microedition/io/Connection
+Verifying subclass privileges for: javax/microedition/io/InputConnection
+Verifying subclass privileges for: javax/microedition/io/OutputConnection
+Verifying subclass privileges for: java/io/InputStream
+Verifying subclass privileges for: java/io/DataInput
+Verifying subclass privileges for: java/io/DataInputStream
+Verifying subclass privileges for: java/io/OutputStream
+Verifying subclass privileges for: java/io/DataOutput
+Verifying subclass privileges for: java/io/DataOutputStream
+Verifying class resource access: javax/microedition/io/Connector -> java/lang/System
+Verifying subclass privileges for: java/lang/StringBuffer
+Verifying class resource access: javax/microedition/io/Connector -> java/lang/StringBuffer
+Verifying class resource access: javax/microedition/io/Connector -> java/lang/Class
+Verifying subclass privileges for: com/sun/cldc/io/GeneralBase
+Verifying subclass privileges for: com/sun/cldc/io/ConnectionBaseInterface
+Verifying subclass privileges for: com/sun/cldc/io/ConnectionBase
+Verifying subclass privileges for: com/sun/cldc/io/j2me/debug/Protocol
+Verifying subclass privileges for: com/sun/cldc/io/j2me/debug/PrivateOutputStream
+Verifying subclass privileges for: java/io/UTFDataFormatException
+Verifying subclass privileges for: java/io/EOFException
+Verifying reflection class resource access: javax/microedition/io/Connector -> com/sun/cldc/io/j2me/debug/Protocol
+Verifying class resource access: com/sun/cldc/io/j2me/debug/Protocol -> com/sun/cldc/io/j2me/debug/PrivateOutputStream
+Verifying class resource access: com/sun/cldc/io/ConnectionBase -> java/io/DataOutputStream
+Verifying subclass privileges for: java/io/PrintStream
+Verifying subclass privileges for: java/io/Writer
+Verifying subclass privileges for: java/io/OutputStreamWriter
+Verifying class resource access: java/lang/System -> java/io/PrintStream
+Verifying class resource access: java/io/PrintStream -> java/io/OutputStreamWriter
+Verifying subclass privileges for: com/sun/cldc/i18n/Helper
+Verifying class resource access: java/io/OutputStreamWriter -> com/sun/cldc/i18n/Helper
+Verifying subclass privileges for: java/io/UnsupportedEncodingException
+Verifying subclass privileges for: java/io/ByteArrayInputStream
+Verifying subclass privileges for: java/io/Reader
+Verifying subclass privileges for: com/sun/cldc/i18n/StreamReader
+Verifying subclass privileges for: java/io/ByteArrayOutputStream
+Verifying subclass privileges for: com/sun/cldc/i18n/StreamWriter
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/System
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/StringBuffer
+Verifying subclass privileges for: java/lang/Character
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/Character
+Verifying class resource access: java/lang/Character -> java/lang/System
+Verifying class resource access: java/lang/Character -> java/lang/Class
+Verifying subclass privileges for: com/sun/cldc/i18n/uclc/DefaultCaseConverter
+Verifying reflection class resource access: java/lang/Character -> com/sun/cldc/i18n/uclc/DefaultCaseConverter
+Verifying class resource access: java/lang/Character -> com/sun/cldc/i18n/uclc/DefaultCaseConverter
+Verifying class resource access: com/sun/cldc/i18n/Helper -> java/lang/Class
+Verifying subclass privileges for: com/sun/cldc/i18n/j2me/ISO8859_1_Writer
+Verifying reflection class resource access: com/sun/cldc/i18n/Helper -> com/sun/cldc/i18n/j2me/ISO8859_1_Writer
+Verifying subclass privileges for: com/safeway/PaymentPluginManager
+Verifying class resource access: com/safeway/PaymentManager -> com/safeway/PaymentPluginManager
+Verifying subclass privileges for: javax/microedition/cbs/CBSError
+Verifying subclass privileges for: javax/microedition/cbs/IllegalSubclassError
+Verifying subclass privileges for: java/lang/LinkageError
+Verifying subclass privileges for: java/util/Hashtable
+Verifying subclass privileges for: java/util/Enumeration
+Verifying subclass privileges for: java/util/Hashtable$HashtableEnumerator
+Verifying class resource access: com/safeway/PaymentPluginManager -> java/util/Hashtable
+Verifying subclass privileges for: java/util/HashtableEntry
+Verifying class resource access: com/safeway/PaymentPluginManager -> java/lang/Class
+Verifying subclass privileges for: com/safeway/PaymentPlugin
+Verifying subclass privileges for: com/ual/MileagePlus
+Verifying permit: com/ual/MileagePlus -> java/lang/Object
+Verifying permit: com/ual/MileagePlus -> com/safeway/PaymentPlugin
+Verifying class resource access: com/ual/MileagePlus -> com/safeway/PaymentPluginManager
+Verifying permit: com/ual/MileagePlus -> com/safeway/PaymentPluginManager
+Verifying class resource access: com/safeway/PaymentPluginManager -> java/lang/System
+Verifying class resource access: com/safeway/PaymentPluginManager -> java/lang/StringBuffer
+registered com.ual.MileagePlus
+Verifying subclass privileges for: com/safeway/Payment
+Verifying subclass privileges for: java/util/Date
+Verifying class resource access: com/safeway/PaymentManager -> java/util/Date
+Verifying class resource access: java/util/Date -> java/lang/System
+Verifying class resource access: com/safeway/PaymentManager -> com/safeway/Payment
+Verifying class resource access: com/safeway/Payment -> java/util/Date
+Verifying class resource access: com/safeway/PaymentManager -> java/lang/System
+Verifying class resource access: com/safeway/PaymentManager -> java/lang/StringBuffer
+Verifying class resource access: java/lang/StringBuffer -> java/lang/String
+Verifying class resource access: java/lang/Object -> java/lang/StringBuffer
+Verifying subclass privileges for: java/lang/Integer
+Verifying class resource access: java/lang/Object -> java/lang/Integer
+Verifying subclass privileges for: java/lang/NumberFormatException
+Verifying class resource access: java/lang/Integer -> java/lang/String
+Verifying class resource access: java/lang/String -> java/lang/System
+Token is processing payment of $100 to safeway on java.util.Date@f8ed77c8
+Verifying subclass privileges for: java/util/NoSuchElementException
+Notifying com.ual.MileagePlus
+Verifying class resource access: com/ual/MileagePlus -> java/lang/System
+Verifying permit: com/ual/MileagePlus -> java/lang/System
+Verifying class resource access: com/ual/MileagePlus -> java/lang/StringBuffer
+Verifying permit: com/ual/MileagePlus -> java/lang/StringBuffer
+United Mileage Plus plugin notified of com.safeway.Payment@d590dbc: paid safeway $100Verifying class resource access: com/ual/MileagePlus -> java/util/Date
+Verifying permit: com/ual/MileagePlus -> java/util/Date
+ on java.util.Date@f8ed77c8
+
+Points earned: 10
+New points total: 10
+[rocs]skvm$ 
+

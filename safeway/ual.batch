@@ -1,0 +1,17 @@
+#
+# This is a sample specification for how a third party's classes could be
+# configured (i.e. "wobulated") for deployment into the SVM on a platform
+# owned by another entity. These classes use explicit permits (i.e. not
+# mutual trusted domains) to authenticate themselves to the platform.
+
+class com.ual.MileagePlus {
+  primary_domain_key="ual_domain"
+  default_field_accessibility="false"
+  default_method_accessibility="false"
+  subclass_permits="com.safeway.PaymentPlugin",
+                   "java.lang.Object"
+  class_resource_access_permits="java.util.Date",
+                                "java.lang.System",
+                                "java.lang.StringBuffer",
+                                "com.safeway.PaymentPluginManager"
+}

@@ -1,0 +1,10 @@
+# THIS IS A GENERATED FILE.
+# Generated on Wed Jan 23 17:43:49 PST 2002
+# Command line arguments: -out ual.req preverified/com/ual/MileagePlus.class
+
+grantee=com.ual.MileagePlus,grantor=com.safeway.PaymentPluginManager,type=c,key=cldc_cra
+grantee=com.ual.MileagePlus,grantor=java.util.Date,type=c,key=cldc_cra
+grantee=com.ual.MileagePlus,grantor=java.lang.Object,type=s,key=cldc_subclass
+grantee=com.ual.MileagePlus,grantor=java.lang.StringBuffer,type=c,key=cldc_cra
+grantee=com.ual.MileagePlus,grantor=java.lang.System,type=c,key=cldc_cra
+grantee=com.ual.MileagePlus,grantor=com.safeway.PaymentPlugin,type=s,key=cldc_subclass

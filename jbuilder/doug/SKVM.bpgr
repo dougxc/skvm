@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Project Group-->
+<projectgroup>
+  <project path="bcel.jpx"/>
+  <project path="cldc1.1.jpx"/>
+  <project path="svmtools.jpx"/>
+  <project path="cldc1.0.3.jpx"/>
+  <project path="kdp-1.0.3.jpx"/>
+</projectgroup>

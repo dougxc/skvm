@@ -1,0 +1,73 @@
+/**
+ * This script file includes methods to check test output and enumerate
+ * test results. 
+ * 
+ * @author Andrew Crouch
+ * @see http://www.beanshell.org
+ */
+
+/* Test Counters */
+static int totalPassed 	= 0;
+static int totalFailed 	= 0;
+
+/**
+ * addTestFailed
+ * Increments the failed test count and prints out message.
+ */
+static void addTestFailed(String testName)
+{
+	totalFailed++;
+	System.out.println(testName + "\t... FAILED");
+}
+
+/**
+ * addTestPassed
+ * Increments the passed test count and prints out message.
+ */
+static void addTestPassed(String testName)
+{
+	totalPassed++;
+	System.out.println(testName + "\t... PASSED");
+}
+
+
+
+/* Very basic test harness. Check if the expected
+	error was part of standard error message */
+static void checkResult(String expError, String testResult, String testName)
+{
+	/* Check all failure conditions */
+	if(expError == null || testResult == null)
+	{
+		addTestFailed(testName);
+		return;		
+	}
+	
+	if(expError.equals("") && testResult.length() > 0)
+	{
+		addTestFailed(testName);
+		return;
+	}
+	
+	if(result.indexOf(expectedError) < 0)
+	{
+		addTestFailed(testName);
+		return;
+	}
+	
+	/* It must have passed */
+	addTestPassed(testName);
+
+}
+
+
+static void printTestResult()
+{
+    /* Print out test summary */
+    print("");
+    print("Total Tests: " + (totalPassed + totalFailed));
+    print("Passed " + totalPassed + " (" + 
+    			  ((double)totalPassed/(totalPassed + totalFailed))*100 + "%)");
+    print("Failed " + totalFailed + " (" + 
+    			  ((double)totalFailed/(totalPassed + totalFailed))*100 + "%)");
+}

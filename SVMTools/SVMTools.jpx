@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--JBuilder XML Project-->
+<project>
+  <property category="generalFormatting2" name="blockIndent" value="4"/>
+  <property category="generalFormatting2" name="overrideBasicFormatting" value="1"/>
+  <property category="generalFormatting2" name="tabSize" value="4"/>
+  <property category="javaFormatting" name="packagePrefixGroups" value="java;javax;BLANK_LINE;java.awt;javax.swing;BLANK_LINE;org;(*)"/>
+  <property category="javadoc" name="custom.tags.1" value="todo;a;To Do:"/>
+  <property category="runtime.0" name="RunnableType" value="com.borland.jbuilder.runtime.ApplicationRunner"/>
+  <property category="runtime.0" name="application.class" value="svmtools.Wobulator"/>
+  <property category="runtime.0" name="application.parameters" value="-batch batch -cp ..\..\..\kvm\api\classes:classes -storepass 123456 -db permits.pdb -d wobulated"/>
+  <property category="serverservices" name="disabled.services" value="jdatastore"/>
+  <property category="sys" name="AuthorLabel" value="@author"/>
+  <property category="sys" name="BackupPath" value="bak"/>
+  <property category="sys" name="CheckStable" value="1"/>
+  <property category="sys" name="Company" value="Sun Microsystems"/>
+  <property category="sys" name="CompanyLabel" value="Company:"/>
+  <property category="sys" name="Copyright" value="Copyright (c) 2001"/>
+  <property category="sys" name="CopyrightLabel" value="Copyright:"/>
+  <property category="sys" name="DefaultPath" value="src"/>
+  <property category="sys" name="Description" value="These are a collection of tools that are required to prepare classes for the SVM."/>
+  <property category="sys" name="DescriptionLabel" value="Description:"/>
+  <property category="sys" name="DocPath" value="doc"/>
+  <property category="sys" name="ExcludeClassEnabled" value="0"/>
+  <property category="sys" name="IncludeTestPath" value="1"/>
+  <property category="sys" name="JDK" value="java version 1.4.2_05-141.3"/>
+  <property category="sys" name="LastTag" value="0"/>
+  <property category="sys" name="Libraries" value="BCEL"/>
+  <property category="sys" name="MakeStable" value="0"/>
+  <property category="sys" name="OutPath" value="classes"/>
+  <property category="sys" name="SourcePath" value="src;test"/>
+  <property category="sys" name="TestPath" value="test"/>
+  <property category="sys" name="Title" value="SVM Tools"/>
+  <property category="sys" name="TitleLabel" value="Title:"/>
+  <property category="sys" name="Version" value="1.0"/>
+  <property category="sys" name="VersionLabel" value="@version"/>
+  <property category="sys" name="WorkingDirectory" value="F%|/svm/apps/HelloWorld"/>
+  <node name="svmtools" type="Folder">
+    <node name="csp" type="Folder">
+      <file path="src/svmtools/csp/MD5RSABasic.java"/>
+      <file path="src/svmtools/csp/SHADSABasic.java"/>
+    </node>
+    <node name="gui" type="Folder">
+      <file path="src/svmtools/gui/AccessPanel.java"/>
+      <file path="src/svmtools/gui/CheckBoxList.java"/>
+      <file path="src/svmtools/gui/ClassPanel.java"/>
+      <file path="src/svmtools/gui/Factory.java"/>
+      <file path="src/svmtools/gui/FieldsPanel.java"/>
+      <file path="src/svmtools/gui/KeyPanel.java"/>
+      <file path="src/svmtools/gui/MembersPanel.java"/>
+      <file path="src/svmtools/gui/MethodsPanel.java"/>
+      <file path="src/svmtools/gui/PermitsPanel.java"/>
+      <file path="src/svmtools/gui/TrustedPanel.java"/>
+    </node>
+    <file path="src/svmtools/BatchWobulate.java"/>
+    <file path="src/svmtools/ClassFile.java"/>
+    <file path="src/svmtools/ClassManager.java"/>
+    <file path="src/svmtools/ClassPath.java"/>
+    <file path="src/svmtools/CSP.java"/>
+    <file path="src/svmtools/CSPException.java"/>
+    <file path="src/svmtools/GenRequests.java"/>
+    <file path="src/svmtools/KeyManager.java"/>
+    <file path="src/svmtools/LoadedClass.java"/>
+    <file path="src/svmtools/PermitManager.java"/>
+    <file path="src/svmtools/PermitTool.java"/>
+    <file path="src/svmtools/Utility.java"/>
+    <file path="src/svmtools/Wobulator.java"/>
+  </node>
+</project>

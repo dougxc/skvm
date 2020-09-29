@@ -1,0 +1,8 @@
+The files in this directory are simply copies of the header files for the
+DCryptor libraries usually found in $DCRYPT_HOME/include. They have been
+put here and slightly modified to avoid naming conflicts between header
+files - global.h and string.h being the currentr trouble makers.
+
+Also, implementations of the functions actually used by the KVM have been
+provided in ../src/dcryptor_libs.c. This implementation is for the Linux
+platform and allows the DCryptor version of the KVM to be simulated on Linux.

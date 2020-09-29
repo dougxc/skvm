@@ -1,0 +1,5 @@
+- implement semantics of TACC_EXCEPTION
+- work out whether or not signature contents should include
+  grantor + type info to prevent unintended permission granting. E.g.
+  class A and B share CRA key and class B give CRA privilege to X.
+  Under current scheme, X can now use this permit to get access to A.

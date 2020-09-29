@@ -1,0 +1,355 @@
+Classes (and interfaces) in the secure VM are partitioned into trusted classes (T-classes)
+and untrusted classes (U-classes). Membership in the set of T-classes is by
+virtue of a set of privileges obtained by each class. These privileges
+define what relationship(s) a class has with other T-classes. For class
+distribution purposes, these privileges are encapsulated in a Trust
+Certificate (TC) that is attached to the class file of a T-class. A SVM
+pre-processor is used to add this TC to a class file as a special ClassFile
+attribute, the Trusted.
+
+The Trusted attribute has been designed with a balance of space efficiency and
+simplicity in mind. For instance, security data (keys,
+permits) can be large and there is potential for redundancy
+between these artifacts (e.g. same key used for both subclassing and
+instantiation). As such, the unique instance pool concept (e.g. the constant
+pool in a standard Java class file) has been employed. 
+
+Trusted Attribute
+====================
+
+The Trusted attribute represents the class wide aspects of the Trust
+Certificate and is used in the attributes table of a ClassFile structure.
+
+The Trusted attribute has the following format:
+
+Trusted_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u2 constant_pool_count;
+    cp_info constant_pool[constant_pool_count];
+    u4 cp_extra_entry_offset;
+    u2 csp_identifier;
+    u2 access_flags;
+    u2 subclass_key;
+    u2 class_resource_access_key;
+    u1 default_field_accessibility;
+    u2 non_default_fields_count;
+    u2 non_default_fields[non_default_fields_count];
+    u1 default_method_accessibility;
+    u2 non_default_methods_count;
+    u2 non_default_methods[non_default_methods_count];
+    u2 subclass_permits_count;
+    u2 class_resource_access_permits_count;
+    u2 ref_class_resource_access_permits_count;
+    {
+        u2 interface_index;
+        u2 permit_index;
+    } subclass_permits[subclass_permits_count];
+    {
+        u2 class_index;
+        u2 permit_index;
+    } class_resource_access_permits[class_resource_access_permits_count];
+    {
+        u2 class_index;
+        u2 permit_index;
+    } ref_class_resource_access_permits[
+                         ref_class_resource_access_permits_count];
+    u2 domains_count;
+    {
+        u2 key_length;
+        u1 key[];
+        u2 signature_length;
+        u1 signature[];
+    } domains[domains_count];
+}
+
+In the description of the Trusted attribute's items below, any reference to 
+another item is scoped immediately by the Trusted attribute and then by the
+scope in which the Trusted attribute lies. For example, any reference to the
+constant_pool binds to the constant_pool item in the Trusted attribute. If
+the constant_pool item in the outer ClassFile structure is being referenced,
+then it will be fully qualified as ClassFile.constant_pool.
+
+The items in the Trusted_attribute are:
+
+attribute_name_index
+
+  The value of the attribute_name_index item must be a valid index into the
+  constant_pool table. The constant_pool entry at that index must be a
+  CONSTANT_Utf8_info structure representing the string "Trusted".
+
+attribute_length
+
+  The value of the attribute_length item indicates the length of the
+  attribute, excluding the initial 6 bytes.
+
+constant_pool_count
+
+  The value of the constant_pool_count is equal to the number of entries in the 
+  constant_pool.
+
+constant_pool
+
+  The constant_pool is a table of structures representing cryptographic
+  structures that are referenced to from within the Trusted attribute. It has
+  exactly the same format as the ClassFile.constant_pool structure except that
+  it knows about two extra types of constants. It is used to store
+  the type of constants that are particular to the Trust Certificate.
+  These types are limited to CONSTANT_Utf8 (for the csp_identifier item as well
+  as names of classes that are instantiated via reflection),
+  CONSTANT_PublicKey and CONSTANT_DigitalSignature
+
+  Given that the constant_pool shares the same structure as the
+  ClassFile.constant_pool, only the SVM specific constants are defined here:
+
+  Constant Type               Value
+
+  CONSTANT_PublicKey          13
+  CONSTANT_DigitalSignature   14
+
+  The CONSTANT_PublicKey_info structure is used to represent a cryptographic
+  key:
+
+    CONSTANT_PublicKey_info {
+        u1 tag;
+        u2 length;
+        u1 key[];
+    }
+
+  The items of the CONSTANT_PublicKey_info structure are the following:
+
+    tag
+      The tag item has the value CONSTANT_PublicKey (13)
+
+    length
+      The value of the length item indicates the size of the key array.
+  
+    key
+      This is opaque encoding of the key data. The format of the data is
+      defined by the cryptographic provider for the SVM platform for which this
+      trusted class was developed.
+  
+
+  The CONSTANT_DigitalSignature_info structure is used to represent a digital
+  signature on this class file that represents a privilege that has been
+  granted to this class by another entity (the signer):
+
+    CONSTANT_DigitalSignature_info {
+        u1 tag;
+        u2 length;
+        u1 signature[];
+
+  The items of the CONSTANT_DigitalSignature_info structure are the following:
+
+    tag
+      The tag item has the value CONSTANT_DigitalSignature (14)
+  
+    length
+      The value of the length item indicates the size of the signature array.
+  
+    signature
+
+      This is an opaque encoding of the signature data. The format of the data
+      is defined by the cryptographic provider for the SVM platform for which
+      this trusted class was developed.
+
+cp_extra_entry_offset
+
+  The cp_extra_entry_offset item specifies where an extra entry was made to the 
+  original ClassFile.constant_pool when adding the Trusted attribute. If such an
+  entry 
+  was made, it will be a CONSTANT_Utf8 entry with the value "Trusted". This 
+  is the entry required by the generic Attribute_info structure. If such an 
+  entry was added, it will be the last entry in the pool. If 
+  cp_extra_entry_offset is zero, then no such entry was added (i.e. the original 
+  class pool had a Utf8 entry with the value "Trusted"). If 
+  cp_extra_entry_offset is non-zero, it specifies the offset in bytes from the 
+  start of the class file to the added entry.
+
+csp_identifier
+
+  This is an index to a CONSTANT_Utf8_info constant_pool entry. The value
+  of this entry is a string identifier for the Cryptography Service
+  Provider (CSP) associated with the SVM platform that this class has been
+  developed for. The CSP defines which public key and digital signature 
+  algorithm is supported as well as the encoding required for the public keys 
+  and digital signatures in a class file.
+
+access_flags
+
+  The value of the access_flags item is a mask of flags used to modify the
+  behaviour of trusted classes with respect to standard Java semantics. To
+  avoid confusion with standard Java access flags, these flags use the
+  "TACC" (Trusted ACCess) prefix as opposed to the standard "ACC" prefix. Only 
+  the first flag can be set for an interface. Each flag positions has a failsafe 
+  default value. That is, only if it is set will the class be granting wider 
+  access.
+
+  Control Name        Value    Interpretation (when set)
+
+  TACC_SUBCLASS       0x0001   Allow unprivileged subclassing.
+  TACC_CLASS_RESOURCE_ACCESS 0x0002
+                               Allow unprivileged class resource access.
+  TACC_EXCEPTION      0x0004   Non-public exception classes thrown by this
+                               class can be caught by other classes via a
+                               publicly accessible base class of the exception
+                               (i.e. standard Java semantics). If this flag is
+                               not set, only classes in the same package as this
+                               class can catch these type of exceptions.
+
+subclass_key
+
+  The value of the subclass_key item either must be zero or a valid index into 
+  the constant_pool table. If the value is nonzero, the entry at that index
+  must be a CONSTANT_PublicKey_info structure representing the key used
+  to verify subclassing privileges granted by this class.
+
+class_resource_access_key
+
+  The value of the class_resource_access_key item either must be zero or a valid
+  index into the constant_pool table. If the value is nonzero, the entry at that
+  index must be a CONSTANT_PublicKey_info structure representing the key used
+  to verify class resource access privileges granted by this class.
+
+default_field_accessibility
+
+  The default_field_accessibility item gives the default accessibility for the 
+  public and protected fields of a trusted class with respect to untrusted 
+  objects. This value of this item applies to all public and protected fields 
+  that do not have an entry in the non_default_fields table. It is interpreted 
+  as a boolean value (i.e. non-zero == true) that determines whether or not a 
+  field is accessible to untrusted objects.
+
+non_default_fields_count
+
+  The value of the non_default_fields_count item is equal to the number of
+  entries in the non_default_fields table.
+
+non_default_fields
+
+  This table specifies the accessibility for public and protected fields that do 
+  not use the default as defined by the default_field_accessibility item. Each 
+  item in the table must be a valid index into the ClassFile.fields table. The 
+  field at that index must be public or protected. The accessibility of that 
+  field is inverse of the default field accessibility. The table must be sorted 
+  in ascending order by field index.
+ 
+default_method_accessibility
+
+  Same as for default_field_accessibility except applies to the public and 
+  protected methods of the class.
+
+non_default_methods_count
+
+  The value of the non_default_methods_count item is equal to the number of
+  entries in the non_default_methods table.
+
+non_default_methods
+
+  This table specifies the accessibility for public and protected methods that 
+  do not use the default as defined by the default_method_accessibility item.
+  Each item in the table must be a valid index into the ClassFile.methods table.
+  The method at that index must be public or protected. The accessibility of
+  that method is inverse of the default method accessibility. The table must be
+  sorted in ascending order by method index.
+
+subclass_permits_count
+
+  The value of the subclass_permits_count item gives the number of entries 
+  in the class_resource_access_permits table.
+
+class_resource_access_permits_count
+
+  The value of the class_resource_access_permits_count item gives the number of
+  entries in the class_resource_access_permits table.
+
+ref_class_resource_access_permits_count
+
+  The value of the ref_class_resource_access_permits_count item gives the number
+  of entries in the ref_class_resource_access_permits table.
+
+subclass_permits
+
+  Each entry in subclass_permits describes the privilege(s) granted to this 
+  class to extend its superclass and implement any trusted interfaces. The 
+  subclass permit (if any) must be first. The interface implementation permits 
+  must have the same order as the ClassFile.interfaces table. Each 
+  subclass_permits table entry contains the following items:
+
+  interface_index
+  
+    The value of interface_index must be the length of the ClassFile.interfaces 
+    table for the subclass permit while for an interface implementation
+    permit, it must correspond to that interface's index in the
+    ClassFile.interfaces table.
+
+  permit_index
+
+    The value of the permit_index item must be a valid index into the
+    constant_pool. The entry at that index must be a 
+    CONSTANT_DigitalSignature_info structure representing a digital signature of 
+    this class that can be verified using the subclassing key of the class (or 
+    interface).
+
+class_resource_access_permits
+
+  Each entry in class_resource_access_permits describes a privilege granted to
+  this class to access a class resource of another class. Each
+  class_resource_access_permits table entry contains the following items:
+
+  class_index
+  
+    The value of class_index must be an index to a CONSTANT_Class_info entry in
+    the ClassFile.constant_pool. This entry represents the class for which
+    this class has a class resource access privilege.
+
+  permit_index
+
+    The value of the permit_index item must be a valid index into the
+    constant_pool. The entry at that index must be a 
+    CONSTANT_DigitalSignature_info structure representing a digital signature of 
+    this class that can be verified using the subclassing key of the class (or 
+    interface) denoted by the class_index item.
+
+ref_class_resource_access_permits
+
+  Each entry in ref_class_resource_access_permits describes a privilege granted
+  to this class to access a class resource of another class via reflection.
+  Given the limited reflective capabilities defined by the CLDC, this reduces to
+  a call to the reflective method Class.newInstance. The structure of this table
+  is exactly the same as for the class_resource_access_permits table except that
+  the class_index item of each entry is an index into the constant_pool (as
+  opposed to the ClassFile.constant_pool) and the entry at that index must be a 
+  CONSTANT_Utf8 which is the name of the class whose class resource is accessed 
+  via reflection.
+
+domains_count
+
+  The value of the domains_count item gives the number of entries 
+  in the domains table.
+
+domains
+
+  The domains table is a structure containing entries that certify a class's
+  membership in a security domain. This table must have at least one entry. The 
+  first entry represents the primary domain of the class and is also used to
+  determine the package membership of the class. Each entry has the following
+  items:
+
+    key_length
+      The value of the key_length item indicates the size of the key array.
+
+    key
+      The key item encodes the public key used to verify membership of this
+      class in the domain identified by the key.
+
+    signature_length
+      The value of the signature_length item indicates the size of the permit
+      array.
+
+    signature
+      The signature item is the encoding of the digital signature generated
+      using the private key corresponding to the public key described above. The
+      input to the digital signature is the original class file as well as the
+      contents of this Trusted attribute sans the domains_count and domains 
+      table items.

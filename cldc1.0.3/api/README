@@ -1,0 +1,24 @@
+This directory contains the configuration files for 'wobulating' the CLDC
+classes to add the required Trusted attributes. It contains the following
+files:
+
+cldc.batch - This is a sample configuration file for doing batch wobulation
+     of the CLDC classes. It contains comments describing the type of
+     configuration it represents.
+
+cldc.keystore - This is a sample Java keystore containing the keys
+     referenced in cldc.batch. Obviously, these keys should never be used
+     in a real deployement.
+
+Build Instructions
+==================
+
+To produce a "wobulated" CLDC API, follow these steps:
+
+1. Select a destination directory for the wobulated classes (DESTDIR).
+2. Enter the following command from this directory:
+
+     svmtool Wobulator -batch cldc.batch -cp <classpath to CLDC API classes> \
+          -storepass 123456 -keystore cldc.keystore -d $DESTDIR
+
+The wobulated classes will now reside under $DESTDIR.

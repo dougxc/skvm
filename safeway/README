@@ -1,0 +1,65 @@
+Overview
+========
+
+The safeway app is a small skeleton application that demonstrates a
+scenario/usage for SVM's security features.
+
+The app consists of two components (from 2 independent sources). The first is
+the Safeway payment manager which would be the primary application on the
+platform running the SVM. The platform is meant to model a payment token
+that will interact with point-of-sale (POS) like devices to handle the
+transfer of some stored value on the card to Safeway. This is called the
+primary component.
+
+The second component of this demo app is from a third party loyalty program
+company (e.g. United Airline's Mileage Plus program). This component
+manage's the points earnt towards a client's Mileage Plus account. The
+client earns points for each transaction made at Safeway using the payment
+token. This component is notified by the payment component at each payment.
+Note that there may be more than one component of this type on the device
+representing other loyalty programs (or something similar) that receive
+payment notifications. These are all called plugin components ("plugins"
+for short).
+
+The deployment of the payment token device will include the primary
+component and may or may not include one (or more) plugins. The device
+includes the ability to update its plugins after deployment through simple
+code downloading in the field. Given that the connection over which the
+code update is not necessarily trusted, there is a need for on the device
+code authentication. This is what the SVM provides. The following explains
+how the SVM architecture is used to provide this security in this example.
+
+Build Instructions
+==================
+
+Prior to building this demo app, the following requirements must be met:
+
+1. There must a wobulated version of the CLDC API available. This will be
+   in the classpath $CLDC_API.
+2. The keystore used to wobulate the CLDC API must be available and will
+   be referred to as $CLDC_KEYSTORE. This keystore must have at least 3 RSA
+   key pairs under the aliases 'cldc_domain', 'cldc_subclass' and
+   'cldc_cra'.
+3. There must be one more keystore that will be used to obtain the primary
+   domain key for the classes in the United Airlines plugin class. This
+   must also be an RSA key pair and must be under the alias 'ual_domain'.
+   This must not match any key pair in $CLDC_KEYSTORE. This will be
+   referenced as $UAL_KEYSTORE.
+
+Do the following in this directory:
+
+% mkdir tmpclasses classes wobulated
+% javac -d tmpclasses -classpath $CLDC_API `find src -name '*.java'`
+% preverify -classpath $CLDC_API -d classes tmpclasses
+% svmtool Wobulator -batch safeway.batch -keystore $CLDC_KEYSTORE \
+      -d wobulated -cp classes
+% svmtool PermitTool -sign -keystore $CLDC_KEYSTORE -storepass 123456 -db \
+      ual.pdb -cp classes @ual.req
+% svmtool Wobulator -batch ual.batch -db ual.pdb -keystore $UAL_KEYSTORE \
+      -d wobulated -cp classes
+
+You can now run the demo by:
+
+% kvm_g -classpath wobulated:$CLDC_API -heapsize 2M com.safeway.PaymentManager
+
+Use the "-tracesvm" switch to trace SVM actions.

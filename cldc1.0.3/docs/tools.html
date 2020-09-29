@@ -1,0 +1,380 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; U; SunOS 5.7 sun4u) [Netscape]">
+   <title>palm.database.MakePalmApp</title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<li>
+<b><u><font size=+4>MakePalmApp</font></u></b></li>
+
+<br>The Java class file "p<tt>alm.database.MakePalmApp"</tt> converts a
+Java application written for the Palm into a file that can be directly
+downloaded onto the Palm.
+<tt>The MakePalmApp</tt> tool represents the last step for building sample
+applications from Java source to produce a Palm application. Refer to
+<tt>PalmReleaseNotes.pdf</tt> for instructions on how to accomplish the first two
+steps (Compilation and Verification). The Java class
+<i>palm.database.MakePalmApp</i> represents the main class for this
+tool and converts a Java application written for the Palm into a 'prc'
+file that can be directly downloaded onto the device.
+<p>The Palm application will appear in your launcher just like any other
+Palm application. Touching the application icon will cause it to begin
+running.
+<p>This documentation does not discuss how to set up the appropriate environment
+variables. It is assumed that the value of the environment variable <tt>CLASSPATH</tt>
+includes the zip file that contains the classes in the "p<tt>alm.database"</tt>
+package.
+<p>This code has been tested in all versions of JDK1.1.x., JDK1.2.x and JDK1.3.x.
+This program has not been tested with any JDK1.0.x version of Java.
+<p>At its simplest, you execute the program as follows:
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; java palm.database.MakePalmApp [&lt;options> . . .] class [class ....]</pre>
+For example,
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; java palm.database.MakePalmApp DragonApp</pre>
+will generate a file <tt>DragonApp.prc</tt> that can be downloaded onto
+the Palm.
+<p>The class name given (<tt>DragonApp</tt> in the above argument) must
+contain a
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; public static void main(String argv[])</pre>
+method, and it is this method that is called automatically when you launch
+the application.
+<p>There are numerous options that can precede the class name. You may
+also include more than one class name, though in most cases this isn't
+necessary. If you include multiple classes, the first class name specified
+must be the class with the <tt>main</tt> method.
+<h2>
+What it does</h2>
+This program converts your Java application into a resource application
+file that can be downloaded onto the Palm. This application file contains
+the classes necessary to run your program and the code needed to start
+the KJava Virtual machine.
+<p>After you download the application file, your application will appear
+in the launcher, along with all the other Palm applications. Touching the
+application icon starts the Java Virtual Machine.
+<p>The converter tries to find all non-core classes used by your program,
+and includes them into the resource file. It automatically includes all
+non-core classes specified in your application, as well as all the non-core
+classes that they reference.
+<h2>
+Options</h2>
+The complete list of options is given below. If two options are given on
+the same line, they are synonyms.
+<br>&nbsp;
+<ul>
+<li>
+-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose output (-v -v gives even more information)</li>
+
+<li>
+-verbose&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same
+as -v</li>
+
+<li>
+-networking&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Application may perform
+networking</li>
+
+<li>
+-nonetworking&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Application does not perform
+networking (default)</li>
+
+<li>
+-classpath &lt;directories or jar files separated by colons></li>
+
+<li>
+-bootclasspath &lt;directories or jar files separated by colons></li>
+
+<li>
+-JARtoPRC &lt;JAR file> Converts JAR file containing a list of application
+classes to a PRC</li>
+
+<li>
+-icon &lt;file>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; File containing icon
+for application.</li>
+
+<li>
+-listicon &lt;file>&nbsp;&nbsp; File containing the "list" icon for application</li>
+
+<li>
+-smallicon &lt;file>&nbsp; Same as -smallicon</li>
+
+<li>
+-name &lt;name>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Short name of application,
+seen in the launcher</li>
+
+<li>
+-longname &lt;name>&nbsp;&nbsp; Long name for the application, seen in
+beaming, etc</li>
+
+<li>
+-creator &lt;crid>&nbsp;&nbsp;&nbsp; Creator ID for the application</li>
+
+<li>
+-outfile &lt;outfile> Name of file to create on local disk</li>
+
+<li>
+-o &lt;outfile>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same as -outfile</li>
+
+<li>
+-version &lt;string>&nbsp; Change version</li>
+
+<li>
+-help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Print this message</li>
+
+<li>
+-usagename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Program name
+to appear in this help message</li>
+</ul>
+Each of these options is described in more detail below.
+<h3>
+-v, -verbose</h3>
+These arguments cause the program to produce more verbose output. Their
+effect is cumulative. The option <tt>-v -v</tt> produces even more output
+than just a single one.
+<h3>
+-classpath</h3>
+If this argument is not specified, the program expects that it can find
+all of your application's classes starting in the current directory. Thus,
+for example, the class <tt>ShootEmUp.Board</tt> will be in the file <tt>./ShootEmUp/Board.class</tt>.
+<p>Note that the kjava classes (see the -skiplist option) do not need
+to be accessible via the classpath. They are recognized as being core classes
+by their name and are not looked at.
+<p>You should give a classpath argument if you are running the application
+builder from a directory other than the directory in which the class files
+for your application reside.
+<p>The classpath argument is a list of directories and zip files. The components
+of the list are separated by a colon on Unix machines, and by a semicolon
+on Windows machines. Each directory or zip file is searched, in turn, for
+a specific class file.
+<p>Note that the CLASSPATH environment variable, or any -classpath argument
+passed directly to Java are ignored. Your application should not be accessing
+the same class files that "big java" is running.
+<h1>
+-icon, -smallicon, -listicon</h1>
+Each of these takes as its argument a filename containing a bitmap. The
+following formats are understood:
+<ul>
+<li>
+Windows bitmap format (.bmp)</li>
+
+<li>
+Portable bitmap format (.pbm)</li>
+
+<li>
+Raw PalmOS format bitmaps (.bin)</li>
+</ul>
+The application builder uses the extension of the filename to determine
+the type of bitmap that the file contains.
+<p>The -icon argument indicates the file contains the bitmap that should
+appear in the Palm Launcher's "icon view". The PalmOS expects this icon
+to be 32x32 bitmap, in which the five left-most and right-most columns
+are white, and in which the bottom most ten rows are white. If you pass
+a file containing a bitmap of a different size (most common is 22x22),
+the bitmap will be converted into a 32x32 bitmap by top-adjusting it and
+centering it horizontally.
+<p>The -smallicon argument indicates the bitmap that appears in the Launcher's
+"list view." The PalmOS expects a 15x9 bitmap. If you pass a file containing
+a different sized bitmap, it is converted into a 15x9 bitmap by top-adjusting
+it and centering it horizontally.
+<p>If either argument is omitted, your file will be given default icons.
+<h3>
+-JARtoPRC &lt;JAR file></h3>
+The <tt>-JARtoPRC</tt> argument specifies the &lt;JAR file> containing
+the application class files that are to be read from the JAR file and converted
+to a Palm PRC file that can be directly downloaded onto the Palm. The JAR
+file specified must be in a valid JAR (Java archive) format. The default
+JAR file is to take the main class name without packages, and append ".jar"
+to it. So, the default JAR file for the Dragon app would be Dragon.jar.
+<h3>
+-name, -longname</h3>
+The <tt>-name</tt> argument specifies the name that appears under the icon
+in the launcher. If this name is more than seven or eight characters long,
+it may be truncated by the Launcher.
+<p>The <tt>-longname</tt> argument specifies the "true" name of the application.
+This name appears when you go to the launcher's Beam and Delete menus.
+This name can be at most 31 characters.
+<p>If you do not specify a <tt>-name</tt> argument, then the class name,
+without packages is used. If you do not specify a <tt>-longname</tt> argument,
+then the full class name is used.
+<p>For example, if your main class is <tt>ShootEmUp.myGame</tt>, the default
+name is "myGame" and the default long name is ShootEmUp.myGame".
+<h3>
+-output, -o</h3>
+This argument specifies the name of the file to which the output is written.
+This file can then be downloaded onto the Pilot.
+<p>The default output file is to take the main class name without packages,
+and append ".prc" to it. So <tt>ShootEmUp.myGame</tt> would be written
+to <tt>myGame.prc</tt>
+<p>Note that the PalmOS does not care what the name of the file is. The
+correspondence between the name of the .prc file and the name of the class
+is purely a convenience.
+<h3>
+-creator</h3>
+Every Palm application is required to have a unique Creator ID. Palm recommends
+that you register your unique Creator ID for each application at its Web
+site.
+<p>The application builder will
+automatically generate a creator ID for you that is based on the name of
+the main class of your application. The creator ID is constructed in such
+a way that it is extremely unlikely that your creator ID will conflict with
+another application.
+<p>If you plan to use databases with your Java application, or plan to
+do other serious long term work, you should register a 4-letter ID with
+Palm, and then pass that 4-letter id as the argument to this function.
+<p>When you specify <tt>-verbose -verbose</tt>, the application builder
+prints out the creator ID that has been assigned to your application.
+<br>&nbsp;
+<h3>
+-usagename</h3>
+The default value of this argument is "java palm.database.MakePalmApp".
+<p>The first line of the help message, printed out when the user gives
+the <tt>-help</tt> argument or makes some other mistake, begins with the
+value of this variable.
+<p>If you create a batch file or shell script, you can add
+<pre>&nbsp;&nbsp;&nbsp; -usagename &lt;name of batch file></pre>
+so that the error message will reflect the name of your batch file.
+<h3>
+-version &lt;string></h3>
+A string indicating the "version" of this application.
+<h3>
+-help</h3>
+Print out a help message.
+<h3>
+Multiple class name arguments</h3>
+Under most circumstances, this program can determine all the additional
+classes needed by your application.
+<p>However, if your program makes use of the <tt>Class.forName</tt>, there
+may be classes loaded dynamically that the application builder might not know
+about. You must explicitly specify these classes.
+<p>If you specify a system class as an additional class name, it will be
+included as part of your application, even though it might already be in the KJava
+Virtual Machine.
+<br>&nbsp;
+<br>&nbsp;
+<li>
+<b><u><font size=+4>ConvPRCtoJAR</font></u></b></li>
+
+<br>The Java class file <tt>"palm.database.ConvPRCtoJAR"</tt> converts
+a Palm application .PRC file into a Java application in JAR (Java archive)
+format. The JAR file contains all the Java application classes.
+<p>This documentation does not describe how to set up the appropriate environment
+variables. It is assumed that the value of the environment variable <tt>CLASSPATH</tt>
+includes the zip file that contains the classes in the "p<tt>alm.database"</tt>
+package.
+<p>This code has been tested in all versions of JDK1.1.x., JDK1.2.x and JDK1.3.x.
+This program has not been tested with any JDK1.0.x version of Java.
+<p>At its simplest, you execute the program as follows:
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; java palm.database.ConvPRCtoJAR [&lt;options> . . .] class [class ....]</pre>
+For example,
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; java palm.database.ConvPRCtoJAR DragonApp</pre>
+will convert the Palm application DragonApp.prc file into a file <tt>DragonApp.jar</tt>
+that will contain all the Java application classes.
+<p>The class name given (<tt>DragonApp</tt> in the above argument) must
+contain a
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; public static void main(String argv[])</pre>
+method, and it is this method that is called automatically when you launch
+the application.
+<p>There are numerous options that can precede the class name.
+<h2>
+What it does</h2>
+This program converts your Palm resource application file into a Java application
+in JAR (Java archive) format. This JAR application file contains the classes
+necessary to run your program and the code needed to start the KJava Virtual
+machine.
+<p>The converter tries to retrieve all Palm class resources from the Palm
+.PRC file and a JAR file entry is created for each of the classes and written
+out to the JAR file along with its respective class data. For each of the
+Java classes, a manifest entry is also generated. All the manifest entries
+are dumped into the manifest file, META-INF/MANIFEST.MF, which is also
+created as part of the JAR file.
+<p>See "The Java Class Libraries Second Edition, Volume 1 Supplement for
+the Java 2 Platform Standard Edition, v1.2" for further information on
+JAR Manifest files.
+<h2>
+Options</h2>
+The complete list of options is given below. If two options are given on
+the same line, they are synonyms.
+<br>&nbsp;
+<br>&nbsp;
+<ul>
+<li>
+-v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Verbose output (-v -v gives even more information)</li>
+
+<li>
+-verbose&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same
+as -v</li>
+
+<li>
+-classpath &lt;directories or jar files separated by colons></li>
+
+<li>
+-PRCfile &lt;PRC file> Converts Palm .PRC file to a JAR file.</li>
+
+<li>
+-outfile &lt;outfile> Name of JAR file to create on local disk</li>
+
+<li>
+-o &lt;outfile>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Same as -outfile</li>
+
+<li>
+-help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Print this message</li>
+
+<li>
+-usagename&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Program name
+to appear in this help message</li>
+</ul>
+Each of these options, along
+with their default value(s) are given in the description below.
+<h3>
+-v, -verbose</h3>
+These arguments cause the program to produce more verbose output. Their
+effect is cumulative. The option <tt>-v -v</tt> produces even more output
+than just a single one.
+<h3>
+-classpath</h3>
+If this argument is not specified, the program expects that it can find
+all of your application's classes starting in the current directory. Thus,
+for example, the class <tt>ShootEmUp.Board</tt> will be in the file <tt>./ShootEmUp/Board.class</tt>.
+<p>You should give a classpath argument if you are running the application
+builder from a directory other than the directory in which the class files
+for your application reside.
+<p>The classpath argument is a list of directories and zip files. The components
+of the list are separated by a colon on Unix machines, and by a semicolon
+on Windows machines. Each directory or zip file is searched, in turn, for
+a specific class file.
+<p>Note that the CLASSPATH environment variable, or any -classpath argument
+passed directly to Java are ignored. Your application should not be accessing
+the same class files that "big Java" is running.
+<h3>
+-PRCfile &lt;PRC file></h3>
+The <tt>-PRCfile</tt> argument specifies the Palm application &lt;PRC file>
+is to be converted to a Java application file in JAR (Java archive) format.
+The .PRC file specified must be a valid Palm .PRC application file. If
+no "-outfile &lt;JAR file> is specified for the name of the JAR file to
+create on local disk, the default JAR file is to use the main
+class name without packages, and append ".jar" to it.
+<h3>
+-output, -o</h3>
+This argument specifies the name of the JAR file to which the JAR file
+output is written. This file will be generated in JAR (Java archive) format.
+<p>The default output file is to use the main class name without packages,
+and append ".jar" to it. So <tt>ShootEmUp.myGame</tt> would be written
+to <tt>myGame.jar.</tt>
+<h3>
+-usagename</h3>
+The default value of this argument is "java palm.database.ConvPRCtoJAR".
+<p>The first line of the help message, printed out when the user gives
+the <tt>-help</tt> argument or makes some other mistake, begins with the
+value of this variable.
+<p>If you create a batch file or shell script, you can add
+<pre>&nbsp;&nbsp;&nbsp; -usagename &lt;name of batch file></pre>
+so that the error message will reflect the name of your batch file.
+<h3>
+-help</h3>
+Print out a help message.
+</body>
+</html>

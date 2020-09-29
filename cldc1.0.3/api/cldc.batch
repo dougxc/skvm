@@ -1,0 +1,226 @@
+#
+# This is a sample specification for how the CLDC classes should be
+# configured (i.e. "wobulated") for deployment with the SVM. The
+# configuration is an example of an extremely secure platform. In
+# particular:
+#
+#    - There is no support for 'untrusted' classes (i.e. java.lang.Object
+#      does not allow subclassing by untrusted classes).
+#    - All CLDC classes are in the same domain and 
+#    - Any external class (i.e. non-CLDC class) will require explicit
+#      privileges to use any of the CLDC classes.
+#
+# Note that this is a good starting point for a modified configuration that
+# is less secure. An instance of the API classes can be "batch" wobulated
+# according to this configuration. These classes can then be loaded into
+# the GUI version of the wobulator and have the customisations performed.
+# The GUI wobulator can then generate a new batch file that reflects the
+# modified configuration.
+# 
+
+
+#
+# This is the configuration that will be applied to all "final"
+# classes in the official CLDC API.
+#
+template cldc_api_final {
+  class_resource_access_key="cldc_cra"
+  primary_domain_key="cldc_domain"
+  default_field_accessibility="false"
+  default_method_accessibility="false"
+}
+
+#
+# This is the configuration that will be applied to all non-"final"
+# classes in the CLDC public API. Note that it extends the configuration
+# for final classes by simply adding a subclassing key.
+#
+
+template cldc_api_non_final : cldc_api_final {
+  subclass_key="cldc_subclass"
+}
+
+#
+# This is the configuration that will be applied to all the
+# classes that support the official CLDC API. Note that they have no
+# subclass or CRA keys as they should not be referenced in any way
+# from outside the CLDC domain.
+#
+template cldc_support {
+  primary_domain_key="cldc_domain"
+  default_field_accessibility="false"
+  default_method_accessibility="false"
+}
+
+#
+# These are the "final" official CLDC API classes
+#
+class java.lang.Byte : cldc_api_final {}
+class java.lang.Boolean : cldc_api_final {}
+class java.lang.Character : cldc_api_final {}
+class java.lang.Long : cldc_api_final {}
+class java.lang.Integer : cldc_api_final {}
+class java.lang.Math : cldc_api_final {}
+class java.lang.Short : cldc_api_final {}
+class java.lang.String : cldc_api_final {}
+class java.lang.System : cldc_api_final {}
+class java.lang.StringBuffer : cldc_api_final {}
+class java.lang.Class : cldc_api_final {}
+class javax.microedition.cbs.TrustedLoader : cldc_api_final {}
+
+#
+# These are the non-"final" official CLDC API classes
+#
+class java.io.ByteArrayInputStream : cldc_api_non_final {}
+class java.io.Reader : cldc_api_non_final {}
+class java.io.DataInput : cldc_api_non_final {}
+class java.io.ByteArrayOutputStream : cldc_api_non_final {}
+class java.io.DataOutput : cldc_api_non_final {}
+class java.io.DataInputStream : cldc_api_non_final {}
+class java.io.EOFException : cldc_api_non_final {}
+class java.io.DataOutputStream : cldc_api_non_final {}
+class java.io.IOException : cldc_api_non_final {}
+class java.io.Writer : cldc_api_non_final {}
+class java.io.InterruptedIOException : cldc_api_non_final {}
+class java.io.InputStreamReader : cldc_api_non_final {}
+class java.io.InputStream : cldc_api_non_final {}
+class java.io.OutputStream : cldc_api_non_final {}
+class java.io.OutputStreamWriter : cldc_api_non_final {}
+class java.io.PrintStream : cldc_api_non_final {}
+class java.io.UTFDataFormatException : cldc_api_non_final {}
+class java.io.UnsupportedEncodingException : cldc_api_non_final {}
+class java.lang.ArithmeticException : cldc_api_non_final {}
+class java.lang.ArrayIndexOutOfBoundsException : cldc_api_non_final {}
+class java.lang.ArrayStoreException : cldc_api_non_final {}
+class java.lang.ClassCastException : cldc_api_non_final {}
+class java.lang.ClassNotFoundException : cldc_api_non_final {}
+class java.lang.Error : cldc_api_non_final {}
+class java.lang.Exception : cldc_api_non_final {}
+class java.lang.IllegalAccessException : cldc_api_non_final {}
+class java.lang.IllegalArgumentException : cldc_api_non_final {}
+class java.lang.IllegalMonitorStateException : cldc_api_non_final {}
+class java.lang.IllegalThreadStateException : cldc_api_non_final {}
+class java.lang.InstantiationException : cldc_api_non_final {}
+class java.lang.IndexOutOfBoundsException : cldc_api_non_final {}
+class java.lang.InterruptedException : cldc_api_non_final {}
+class java.lang.Runtime : cldc_api_non_final {}
+class java.lang.NullPointerException : cldc_api_non_final {}
+class java.lang.NumberFormatException : cldc_api_non_final {}
+class java.lang.Object : cldc_api_non_final {}
+class java.lang.NegativeArraySizeException : cldc_api_non_final {}
+class java.lang.OutOfMemoryError : cldc_api_non_final {}
+class java.lang.Runnable : cldc_api_non_final {}
+class java.lang.RuntimeException : cldc_api_non_final {}
+class java.lang.SecurityException : cldc_api_non_final {}
+class java.lang.String : cldc_api_non_final {}
+class java.lang.StringIndexOutOfBoundsException : cldc_api_non_final {}
+class java.lang.System : cldc_api_non_final {}
+class java.lang.Thread : cldc_api_non_final {}
+class java.lang.StringBuffer : cldc_api_non_final {}
+class java.lang.Throwable : cldc_api_non_final {}
+class java.lang.VirtualMachineError : cldc_api_non_final {}
+class java.lang.AbstractMethodError : cldc_api_non_final {}
+class java.lang.ClassCircularityError : cldc_api_non_final {}
+class java.lang.ClassFormatError : cldc_api_non_final {}
+class java.lang.ExceptionInInitializerError : cldc_api_non_final {}
+class java.lang.IllegalAccessError : cldc_api_non_final {}
+class java.lang.IncompatibleClassChangeError : cldc_api_non_final {}
+class java.lang.InstantiationError : cldc_api_non_final {}
+class java.lang.Class : cldc_api_non_final {}
+class java.lang.LinkageError : cldc_api_non_final {}
+class java.lang.NoClassDefFoundError : cldc_api_non_final {}
+class java.lang.NoSuchFieldError : cldc_api_non_final {}
+class java.lang.NoSuchMethodError : cldc_api_non_final {}
+class java.lang.UnsatisfiedLinkError : cldc_api_non_final {}
+class java.lang.UnsupportedClassVersionError : cldc_api_non_final {}
+class java.lang.VerifyError : cldc_api_non_final {}
+class java.lang.StackOverflowError : cldc_api_non_final {}
+class java.util.Enumeration : cldc_api_non_final {}
+class java.util.Date : cldc_api_non_final {}
+class java.util.Calendar : cldc_api_non_final {}
+class java.util.EmptyStackException : cldc_api_non_final {}
+class java.util.Random : cldc_api_non_final {}
+class java.util.Hashtable : cldc_api_non_final {}
+class java.util.NoSuchElementException : cldc_api_non_final {}
+class java.util.Stack : cldc_api_non_final {}
+class java.util.Vector : cldc_api_non_final {}
+class java.util.TimeZone : cldc_api_non_final {}
+class javax.microedition.io.Connection : cldc_api_non_final {}
+class javax.microedition.io.ConnectionNotFoundException : cldc_api_non_final {}
+class javax.microedition.io.Connector : cldc_api_non_final {}
+class javax.microedition.io.ContentConnection : cldc_api_non_final {}
+class javax.microedition.io.Datagram : cldc_api_non_final {}
+class javax.microedition.io.DatagramConnection : cldc_api_non_final {}
+class javax.microedition.io.InputConnection : cldc_api_non_final {}
+class javax.microedition.io.OutputConnection : cldc_api_non_final {}
+class javax.microedition.io.StreamConnection : cldc_api_non_final {}
+class javax.microedition.io.StreamConnectionNotifier : cldc_api_non_final {}
+class javax.microedition.cbs.TrustedLoader : cldc_api_non_final {}
+class javax.microedition.cbs.CBSError : cldc_api_non_final {}
+class javax.microedition.cbs.IllegalSubclassError : cldc_api_non_final {}
+class javax.microedition.cbs.IllegalClassResourceAccessError : cldc_api_non_final {}
+class javax.microedition.cbs.IllegalDomainError : cldc_api_non_final {}
+class javax.microedition.cbs.TrustedClassFormatError : cldc_api_non_final {}
+
+#
+# These are the CLDC supporting classes
+#
+class java.util.Hashtable$HashtableEnumerator : cldc_support {}
+class java.util.HashtableEntry : cldc_support {}
+class java.util.VectorEnumerator : cldc_support {}
+class com.sun.cldc.io.j2me.comm.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.j2me.comm.PrivateInputStreamWithBuffer : cldc_support {}
+class com.sun.cldc.io.j2me.comm.PrivateOutputStream : cldc_support {}
+class com.sun.cldc.io.j2me.debug.PrivateOutputStream : cldc_support {}
+class com.sun.cldc.io.j2me.events.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.j2me.http.Protocol$PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.j2me.http.Protocol$PrivateOutputStream : cldc_support {}
+class com.sun.cldc.io.j2me.resource.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.j2me.socket.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.j2me.socket.PrivateInputStreamWithBuffer : cldc_support {}
+class com.sun.cldc.io.j2me.socket.PrivateOutputStream : cldc_support {}
+class com.sun.cldc.io.palm.comm.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.palm.comm.PrivateOutputStream : cldc_support {}
+class com.sun.cldc.io.palm.http.PrivateOutputStream : cldc_support {}
+class com.sun.cldc.io.palm.http.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.palm.https.PrivateInputStream : cldc_support {}
+class com.sun.cldc.io.palm.https.PrivateOutputStream : cldc_support {}
+class com.sun.cldc.i18n.uclc.DefaultCaseConverter : cldc_support {}
+class com.sun.cldc.i18n.j2me.ISO8859_1_Reader : cldc_support {}
+class com.sun.cldc.i18n.j2me.ISO8859_1_Writer : cldc_support {}
+class com.sun.cldc.i18n.Helper : cldc_support {}
+class com.sun.cldc.i18n.j2se.Default_Reader : cldc_support {}
+class com.sun.cldc.i18n.j2se.Default_Writer : cldc_support {}
+class com.sun.cldc.i18n.StreamReader : cldc_support {}
+class com.sun.cldc.i18n.StreamWriter : cldc_support {}
+class com.sun.cldc.io.j2se.http.Protocol : cldc_support {}
+class com.sun.cldc.io.j2se.datagram.DatagramObject : cldc_support {}
+class com.sun.cldc.io.j2se.datagram.Protocol : cldc_support {}
+class com.sun.cldc.io.j2se.UniversalFilterInputStream : cldc_support {}
+class com.sun.cldc.io.j2se.UniversalFilterOutputStream : cldc_support {}
+class com.sun.cldc.io.j2se.serversocket.Protocol : cldc_support {}
+class com.sun.cldc.io.j2se.socket.Protocol : cldc_support {}
+class com.sun.cldc.io.j2se.translate.Protocol : cldc_support {}
+class com.sun.cldc.io.ConnectionBase : cldc_support {}
+class com.sun.cldc.io.j2me.comm.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.datagram.DatagramObject : cldc_support {}
+class com.sun.cldc.io.j2me.datagram.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.debug.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.events.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.http.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.resource.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.serversocket.Protocol : cldc_support {}
+class com.sun.cldc.io.j2me.socket.Protocol : cldc_support {}
+class com.sun.cldc.io.ConnectionBaseInterface : cldc_support {}
+class com.sun.cldc.io.connections.HttpConnection : cldc_support {}
+class com.sun.cldc.io.palm.comm.Protocol : cldc_support {}
+class com.sun.cldc.io.palm.http.InetException : cldc_support {}
+class com.sun.cldc.io.palm.http.Inet : cldc_support {}
+class com.sun.cldc.io.palm.http.Protocol : cldc_support {}
+class com.sun.cldc.io.palm.https.Protocol : cldc_support {}
+class com.sun.cldc.io.GeneralBase : cldc_support {}
+class com.sun.cldc.io.NetworkConnectionBase : cldc_support {}
+class com.sun.cldc.io.DateParser : cldc_support {}
+class com.sun.cldc.util.j2me.CalendarImpl : cldc_support {}
+class com.sun.cldc.util.j2me.TimeZoneImpl : cldc_support {}
+class com.sun.cldc.util.TimeZoneImplementation : cldc_support {}

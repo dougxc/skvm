@@ -1,0 +1,2061 @@
+
+	AREA	text, CODE, READONLY, INTERWORK
+        CODE32
+	EXPORT	FastInterpret
+FastInterpret
+	stmfd	sp!, {r4-r11, lr}
+	ldr	r4, Addr_GlobalState
+	sub	sp, sp, #12
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	ldralb	lr, [r7, #0]!
+	adrl	r6, JumpTable
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4                  
+	moval	pc, lr    
+restoreAndReschedule_s0
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	ldr	r0, [r8], #-4 
+reschedule
+	ldr	r2, Addr_Timeslice       
+	ldr	r1, [r2]         
+	cmp	r1, #0           
+	ldrneb	lr, [r7, #0]!
+	sub	r1, r1, #1       
+	ldrne	lr, [r6, lr, lsl #2]  
+	str	r1, [r2]         
+	movne	pc, lr    
+	ldr	r4, Addr_GlobalState
+	ldr	r5, Addr_AliveThreadCount
+	str	r0, [r8, #4]!
+	stmia	r4, {r7, r8, r9, r10, r11}  
+rescheduleLoop
+	IMPORT	InterpreterHandleEvent
+	IMPORT	checkTimerQueue
+	IMPORT	SwitchThread
+	ldr	r1, [r5]         
+	mov	r0, sp           
+	cmp	r1, #0
+	ldmlefd	sp!, {r1-r3, r4-r11, pc} 
+	bl	checkTimerQueue
+	ldmia	sp, {r0 - r1}
+	bl	InterpreterHandleEvent
+	bl	SwitchThread
+	cmp	r0, #0
+	ldmneia	r4, {r7, r8, r9, r10, r11}  
+	ldrneb	lr, [r7, #0]!
+	beq	rescheduleLoop
+	ldrne	lr, [r6, lr, lsl #2]  
+	ldrne	r0, [r8], #-4 
+	movne	pc, lr    
+impl_NOP  
+	ldralb	lr, [r7, #1]!
+	ldral	pc, [r6, lr, lsl #2]  
+impl_ICONST_M1  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #-1 
+	moval	pc, lr     
+impl_ACONST_NULL  
+impl_ICONST_0  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #0 
+	moval	pc, lr     
+impl_ICONST_1  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #1 
+	moval	pc, lr     
+impl_ICONST_2  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #2 
+	moval	pc, lr     
+impl_ICONST_3  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #3 
+	moval	pc, lr     
+impl_ICONST_4  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #4 
+	moval	pc, lr     
+impl_ICONST_5  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, #5 
+	moval	pc, lr     
+impl_LCONST_0  
+	ldralb	lr, [r7, #1]!
+	mov	r1, #0   
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	mov	r0, #( 0 >>31)  
+	moval	pc, lr    
+impl_LCONST_1  
+	ldralb	lr, [r7, #1]!
+	mov	r1, #1   
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	mov	r0, #( 1 >>31)  
+	moval	pc, lr    
+impl_BIPUSH  
+	ldralb	lr, [r7, #2]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	ldrsb	r0, [r7, #-1]
+	moval	pc, lr    
+impl_SIPUSH  
+	ldralb	lr, [r7, #3]!
+	ldrsb	r3, [r7, #-2]  
+	ldrb	r12, [r7, #-1]  
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r8, #4]!
+	addal	r0, r12, r3, lsl #8  
+	moval	pc, lr    
+impl_LDC  
+	ldralb	lr, [r7, #2]!
+	ldrb	r3, [r7, #-1]
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r8, #4]!
+	ldr	r0, [r10, r3, lsl #2]
+	moval	pc, lr    
+impl_LDC_W  
+	ldralb	lr, [r7, #3]!
+	ldrb	r3, [r7, #-2]        
+	ldrb	r12, [r7, #-1]        
+	ldral	lr, [r6, lr, lsl #2]  
+	addal	r3, r12, r3, lsl #8  
+	str	r0, [r8, #4]!
+	ldr	r0, [r10, r3, lsl #2]
+	moval	pc, lr    
+impl_LDC2_W  
+	ldralb	lr, [r7, #3]!
+	ldrb	r3, [r7, #-2]         
+	ldrb	r12, [r7, #-1]        
+	ldral	lr, [r6, lr, lsl #2]  
+	addal	r3, r12, r3, lsl #8  
+	add	r3, r10, r3, lsl #2   
+	ldr	r1, [r3, #4]
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r3, #0]
+	moval	pc, lr    
+	DCD	impl_wide_ILOAD  
+impl_ILOAD  
+impl_ALOAD  
+	ldralb	lr, [r7, #2]!
+	ldrb	r3, [r7, #-1]  
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r8, #4]!
+	ldr	r0, [r9, r3, lsl #2]
+	moval	pc, lr    
+impl_wide_ILOAD  
+impl_wide_ALOAD  
+	ldralb	lr, [r7, #4]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r9, r3, lsl #2]
+	moval	pc, lr    
+	DCD	impl_wide_LLOAD  
+impl_LLOAD  
+	ldralb	lr, [r7, #2]!
+	ldrb	r3, [r7, #-1]  
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r3, r9, r3, lsl #2  
+	ldr	r1, [r3]
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r3, #4]
+	moval	pc, lr    
+impl_wide_LLOAD  
+	ldralb	lr, [r7, #4]!
+	add	r3, r9, r3, lsl #2  
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r1, [r3]
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r3, #4]
+	moval	pc, lr    
+impl_ILOAD_0  
+impl_ALOAD_0  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r9, #0 *4]
+	moval	pc, lr     
+impl_ILOAD_1  
+impl_ALOAD_1  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r9, #1 *4]
+	moval	pc, lr     
+impl_ILOAD_2  
+impl_ALOAD_2  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r9, #2 *4]
+	moval	pc, lr     
+impl_ILOAD_3  
+impl_ALOAD_3  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r9, #3 *4]
+	moval	pc, lr     
+impl_LLOAD_0  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r9, #( 0 *4)]
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r9, #(( 0 *4)+4)]
+	moval	pc, lr     
+impl_LLOAD_1  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r9, #( 1 *4)]
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r9, #(( 1 *4)+4)]
+	moval	pc, lr     
+impl_LLOAD_2  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r9, #( 2 *4)]
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r9, #(( 2 *4)+4)]
+	moval	pc, lr     
+impl_LLOAD_3  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r9, #( 3 *4)]
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	ldr	r0, [r9, #(( 3 *4)+4)]
+	moval	pc, lr     
+impl_IALOAD  
+impl_AALOAD  
+	ldr	r1, [r8], #-4          
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r0, r12  
+	ldrlob	lr, [r7, #1]!
+	ldrlo	lr, [r6, lr, lsl #2]  
+	addlo	r1, r1, r0, lsl #2
+	ldrlo	r0, [r1, #12]
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException
+impl_LALOAD  
+	ldr	r1, [r8], #-4 
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r0, r12  
+	ldrlob	lr, [r7, #1]!
+	addlo	r3, r1, r0, lsl #3  
+	ldrlo	lr, [r6, lr, lsl #2]  
+	ldrlo	r1, [r3, #12]
+	ldrlo	r0, [r3, #12  + 4]
+	strlo	r1, [r8, #4]!
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException
+impl_BALOAD  
+	ldr	r1, [r8], #-4 
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r0, r12  
+	ldrlob	lr, [r7, #1]!
+	ldrlo	lr, [r6, lr, lsl #2]  
+	addlo	r1, r1, r0, lsl #0 
+	ldrlosb	r0, [r1, #12]
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException 
+impl_CALOAD  
+	ldr	r1, [r8], #-4 
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r0, r12  
+	ldrlob	lr, [r7, #1]!
+	ldrlo	lr, [r6, lr, lsl #2]  
+	addlo	r1, r1, r0, lsl #1 
+	ldrloh	r0, [r1, #12]
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException 
+impl_SALOAD  
+	ldr	r1, [r8], #-4 
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r0, r12  
+	ldrlob	lr, [r7, #1]!
+	ldrlo	lr, [r6, lr, lsl #2]  
+	addlo	r1, r1, r0, lsl #1 
+	ldrlosh	r0, [r1, #12]
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException 
+	DCD	impl_wide_ISTORE  
+impl_ISTORE  
+impl_ASTORE  
+	ldralb	lr, [r7, #2]!
+	ldrb	r3, [r7, #-1]  
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r9, r3, lsl #2]
+	ldr	r0, [r8], #-4 
+	moval	pc, lr    
+impl_wide_ISTORE  
+impl_wide_ASTORE  
+	ldralb	lr, [r7, #4]!
+	str	r0, [r9, r3, lsl #2]
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	moval	pc, lr    
+	DCD	impl_wide_LSTORE  
+impl_LSTORE  
+	ldralb	lr, [r7, #2]!
+	ldrb	r3, [r7, #-1]  
+	mov	r2, r0 
+	ldmfa	r8!, {r0 - r1} 
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r3, r9, r3, lsl #2  
+	stmia	r3, {r1 - r2}
+	moval	pc, lr    
+impl_wide_LSTORE  
+	ldralb	lr, [r7, #4]!
+	mov	r2, r0 
+	ldmfa	r8!, {r0 - r1} 
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r3, r9, r3, lsl #2  
+	stmia	r3, {r1 - r2}
+	moval	pc, lr    
+impl_ISTORE_0  
+impl_ASTORE_0  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #0 *4]
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	moval	pc, lr     
+impl_ISTORE_1  
+impl_ASTORE_1  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #1 *4]
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	moval	pc, lr     
+impl_ISTORE_2  
+impl_ASTORE_2  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #2 *4]
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	moval	pc, lr     
+impl_ISTORE_3  
+impl_ASTORE_3  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #3 *4]
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	moval	pc, lr     
+impl_LSTORE_0  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #( 0 *4)+4]
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	str	r1, [r9, #( 0 *4)]
+	moval	pc, lr     
+impl_LSTORE_1  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #( 1 *4)+4]
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	str	r1, [r9, #( 1 *4)]
+	moval	pc, lr     
+impl_LSTORE_2  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #( 2 *4)+4]
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	str	r1, [r9, #( 2 *4)]
+	moval	pc, lr     
+impl_LSTORE_3  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r9, #( 3 *4)+4]
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	str	r1, [r9, #( 3 *4)]
+	moval	pc, lr     
+impl_IASTORE  
+	ldmfa	r8!, {r1 - r2}   
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r2, r12  
+	ldrlob	lr, [r7, #1]!
+	addlo	r1, r1, r2, lsl #2
+	ldrlo	lr, [r6, lr, lsl #2]  
+	strlo	r0, [r1, #12]
+	ldrlo	r0, [r8], #-4 
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException
+impl_LASTORE  
+	mov	r4, r0 
+	ldmfa	r8!, {r0 - r3}               
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r2, r12  
+	ldrlob	lr, [r7, #1]!
+	addlo	r1, r1, r2, lsl #3
+	ldrlo	lr, [r6, lr, lsl #2]  
+	strlo	r3, [r1, #12]
+	strlo	r4, [r1, #(12  + 4)]
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException
+impl_BASTORE  
+	ldmfa	r8!, {r1 - r2} 
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r2, r12  
+	ldrlob	lr, [r7, #1]!
+	addlo	r1, r1, r2, lsl #0 
+	ldrlo	lr, [r6, lr, lsl #2]  
+	strlob	r0, [r1, #12]
+	ldrlo	r0, [r8], #-4 
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException 
+impl_SASTORE  
+impl_CASTORE  
+	ldmfa	r8!, {r1 - r2} 
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r2, r12  
+	ldrlob	lr, [r7, #1]!
+	addlo	r1, r1, r2, lsl #1 
+	ldrlo	lr, [r6, lr, lsl #2]  
+	strloh	r0, [r1, #12]
+	ldrlo	r0, [r8], #-4 
+	movlo	pc, lr    
+	b	handleArrayIndexOutOfBoundsException 
+impl_AASTORE  
+	IMPORT	isAssignableTo
+	IMPORT	isAssignableToFast
+	ldmfa	r8, {r1 - r2} 
+	str	r0, [r8, #4]!
+	cmp	r1, #0
+	ldrne	r12, [r1, #8] 
+	beq	handleNullPointerException
+	cmp	r2, r12   
+	bhs	handleArrayIndexOutOfBoundsException 
+	cmp	r0, #0
+	beq	%f2               
+	ldr	r5, [r1, #0]     
+	ldr	r4, [r0, #0]     
+	ldr	r5, [r5, #24]   
+	mov	r0, r4 
+	mov	r1, r5 
+	bl	isAssignableToFast
+	cmp	r0, #0
+	bne	%f1               
+	mov	r0, r4 
+	ldr	r4, Addr_GlobalState
+	mov	r1, r5 
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	isAssignableTo
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	cmp	r0, #0
+	beq	handleArrayStoreException
+1
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r0 - r3}               
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r1, r1, #12 
+	str	r3, [r1, r2, lsl #2]
+	moval	pc, lr    
+2
+	ldralb	lr, [r7, #1]!
+	sub	r8, r8, #12      
+	add	r1, r1, #12 
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r1, r2, lsl #2]
+	ldr	r0, [r8], #-4 
+	moval	pc, lr    
+impl_POP  
+impl_L2I  
+	ldralb	lr, [r7, #1]!
+	ldr	r0, [r8], #-4 
+	ldral	pc, [r6, lr, lsl #2]  
+impl_POP2  
+	ldralb	lr, [r7, #1]!
+	sub	r8, r8, #4
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r8], #-4 
+	moval	pc, lr    
+impl_DUP  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	pc, [r6, lr, lsl #2]  
+impl_DUP_X1  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	moval	pc, lr    
+impl_DUP_X2  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r2} 
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r2} 
+	moval	pc, lr    
+impl_DUP2  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8] 
+	ldral	lr, [r6, lr, lsl #2]  
+	stmfa	r8!, {r0 - r1} 
+	moval	pc, lr    
+impl_DUP2_X1  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r2} 
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r2, [r8, #4]!
+	stmfa	r8!, {r0 - r2} 
+	moval	pc, lr    
+impl_DUP2_X2  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r3, [r8, #4]!
+	stmfa	r8!, {r0 - r3} 
+	moval	pc, lr    
+impl_SWAP  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r8, #4]!
+	mov	r0, r1 
+	moval	pc, lr    
+impl_IADD  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r0, r1, r0 
+	moval	pc, lr     
+impl_LADD  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	ldral	lr, [r6, lr, lsl #2]  
+	adds	r3, r1, r3  
+	adc	r0, r2, r0  
+	str	r3, [r8, #4]!
+	moval	pc, lr     
+impl_ISUB  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	sub	r0, r1, r0 
+	moval	pc, lr     
+impl_LSUB  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	ldral	lr, [r6, lr, lsl #2]  
+	subs	r3, r1, r3  
+	sbc	r0, r2, r0  
+	str	r3, [r8, #4]!
+	moval	pc, lr     
+impl_IMUL  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	mul	r0, r1, r0 
+	moval	pc, lr     
+impl_LMUL  
+	ldmfa	r8!, {r1 - r3} 
+	umull	r12, lr, r1, r3  
+	ldralb	r4, [r7, #1]!
+	mla	lr, r1, r0, lr  
+	mla	lr, r3, r2, lr  
+	ldral	r4, [r6, r4, lsl #2]  
+	str	r12, [r8, #4]!
+	mov	r0, lr 
+	moval	pc, r4     
+impl_IDIV  
+	IMPORT	FastInterpret_idiv 
+	cmp	r0, #0
+	beq	handleDivideByZeroException
+	mov	r1, r0 
+	ldralb	r4, [r7, #1]!
+	ldr	r0, [r8], #-4 
+	ldr	lr, [r6, r4, lsl #2] 
+	b	FastInterpret_idiv  
+impl_LDIV  
+	IMPORT	FastInterpret_ldiv 
+	mov	r3, r0 
+	ldmfa	r8!, {r0 - r2} 
+	orrs	lr, r2, r3 
+	beq	handleDivideByZeroException
+	ldralb	r4, [r7, #1]!
+	bl	FastInterpret_ldiv 
+	ldral	r4, [r6, r4, lsl #2]  
+	str	r0, [r8, #4]!
+	mov	r0, r1 
+	moval	pc, r4      
+impl_IREM  
+	IMPORT	FastInterpret_irem 
+	cmp	r0, #0
+	beq	handleDivideByZeroException
+	mov	r1, r0 
+	ldralb	r4, [r7, #1]!
+	ldr	r0, [r8], #-4 
+	ldr	lr, [r6, r4, lsl #2] 
+	b	FastInterpret_irem  
+impl_LREM  
+	IMPORT	FastInterpret_lrem 
+	mov	r3, r0 
+	ldmfa	r8!, {r0 - r2} 
+	orrs	lr, r2, r3 
+	beq	handleDivideByZeroException
+	ldralb	r4, [r7, #1]!
+	bl	FastInterpret_lrem 
+	ldral	r4, [r6, r4, lsl #2]  
+	str	r0, [r8, #4]!
+	mov	r0, r1 
+	moval	pc, r4      
+impl_INEG  
+	ldralb	lr, [r7, #1]!
+	rsb	r0, r0, #0
+	ldral	pc, [r6, lr, lsl #2]  
+impl_LNEG  
+	ldralb	lr, [r7, #1]!
+	ldr	r3, [r8], #-4 
+	rsbs	r3, r3, #0
+	ldral	lr, [r6, lr, lsl #2]  
+	rsc	r0, r0, #0
+	str	r3, [r8, #4]!
+	moval	pc, lr    
+impl_ISHL  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	and	r0, r0, #31
+	mov	r0, r1, lsl  r0 
+	moval	pc, lr     
+impl_LSHL  
+	ands	r4, r0, #63
+	beq	impl_POP  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r2} 
+	ldral	lr, [r6, lr, lsl #2]  
+	rsbs	r5, r4, #32 
+	suble	r4, r4, #32
+	movle	r0, r1, lsl r4 
+	movle	r3, #0
+	movgt	r0, r2, lsl r4 
+	orrgt	r0, r0, r1, lsr r5 
+	movgt	r3, r1, lsl r4 
+	str	r3, [r8, #4]!
+	moval	pc, lr    
+impl_ISHR  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	and	r0, r0, #31
+	mov	r0, r1, asr  r0 
+	moval	pc, lr     
+impl_LSHR  
+	ands	r4, r0, #63
+	beq	impl_POP  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r2} 
+	ldral	lr, [r6, lr, lsl #2]  
+	rsbs	r5, r4, #32 
+	suble	r4, r4, #32
+	movle	r3, r2, asr r4 
+	movle	r0, r2, asr #32
+	movgt	r3, r1, lsr r4 
+	orrgt	r3, r3, r2, lsl r5 
+	movgt	r0, r2, asr r4 
+	str	r3, [r8, #4]!
+	moval	pc, lr    
+impl_IUSHR  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	and	r0, r0, #31
+	mov	r0, r1, lsr  r0 
+	moval	pc, lr     
+impl_LUSHR  
+	ands	r4, r0, #63
+	beq	impl_POP  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r2} 
+	ldral	lr, [r6, lr, lsl #2]  
+	rsbs	r5, r4, #32 
+	suble	r4, r4, #32
+	movle	r3, r2, lsr r4 
+	movle	r0, #0
+	movgt	r3, r1, lsr r4 
+	orrgt	r3, r3, r2, lsl r5 
+	movgt	r0, r2, lsr r4 
+	str	r3, [r8, #4]!
+	moval	pc, lr    
+impl_IAND  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	and	r0, r1, r0 
+	moval	pc, lr     
+impl_LAND  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	ldral	lr, [r6, lr, lsl #2]  
+	and	r3, r1, r3  
+	and	r0, r2, r0  
+	str	r3, [r8, #4]!
+	moval	pc, lr     
+impl_IOR  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	orr	r0, r1, r0 
+	moval	pc, lr     
+impl_LOR  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	ldral	lr, [r6, lr, lsl #2]  
+	orr	r3, r1, r3  
+	orr	r0, r2, r0  
+	str	r3, [r8, #4]!
+	moval	pc, lr     
+impl_IXOR  
+	ldralb	lr, [r7, #1]!
+	ldr	r1, [r8], #-4 
+	ldral	lr, [r6, lr, lsl #2]  
+	eor	r0, r1, r0 
+	moval	pc, lr     
+impl_LXOR  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	ldral	lr, [r6, lr, lsl #2]  
+	eor	r3, r1, r3  
+	eor	r0, r2, r0  
+	str	r3, [r8, #4]!
+	moval	pc, lr     
+	DCD	impl_wide_IINC  
+impl_IINC  
+	ldrb	r3, [r7, #1]  
+	ldrsb	r1, [r7, #2]  
+	ldralb	lr, [r7, #3]!
+	ldr	r2, [r9, r3, lsl #2]  
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r2, r2, r1        
+	str	r2, [r9, r3, lsl #2]
+	moval	pc, lr    
+impl_wide_IINC  
+	ldrsb	r1, [r7, #4]     
+	ldrb	r2, [r7, #5]     
+	ldralb	lr, [r7, #6]!
+	ldr	r4, [r9, r3, lsl #2]  
+	addal	r1, r2, r1, lsl #8         
+	ldral	lr, [r6, lr, lsl #2]  
+	add	r4, r4, r1            
+	str	r4, [r9, r3, lsl #2]  
+	moval	pc, lr    
+impl_I2L  
+	ldralb	lr, [r7, #1]!
+	str	r0, [r8, #4]!
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, r0, asr #31
+	moval	pc, lr    
+impl_I2B  
+	ldralb	lr, [r7, #1]!
+	mov	r0, r0, lsl #24
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, r0, asr #24
+	moval	pc, lr    
+impl_I2C  
+	ldralb	lr, [r7, #1]!
+	mov	r0, r0, lsl #16
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, r0, lsr #16
+	moval	pc, lr    
+impl_I2S  
+	ldralb	lr, [r7, #1]!
+	mov	r0, r0, lsl #16
+	ldral	lr, [r6, lr, lsl #2]  
+	mov	r0, r0, asr #16
+	moval	pc, lr    
+impl_LCMP  
+	ldralb	lr, [r7, #1]!
+	ldmfa	r8!, {r1 - r3} 
+	subs	r12, lr, #0x99 
+	cmp	r12, #(0x9e  - 0x99 )
+	addls	pc, pc, r12, lsl #6     
+	b	lcmp_normal
+impl_LCMP_IFEQ  
+	cmp	r1, r3   
+	cmpeq	r2, r0   
+	ldrneb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrne	pc, [r6, lr, lsl #2]  
+	ldreqsb	r3, [r7, #1]
+	ldreqb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldrgtb	lr, [r7, r3]!
+	addle	r7, r7, r3 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule
+ nop
+ nop
+ nop
+	nop	
+impl_LCMP_IFNE  
+	cmp	r1, r3   
+	cmpeq	r2, r0   
+	ldreqb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldreq	pc, [r6, lr, lsl #2]  
+	ldrnesb	r3, [r7, #1]
+	ldrneb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldrgtb	lr, [r7, r3]!
+	addle	r7, r7, r3 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule
+ nop
+ nop
+ nop
+	nop	
+impl_LCMP_IFLT  
+	cmp	r1, r3   
+	sbcs	r0, r2, r0   
+	ldrgeb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrge	pc, [r6, lr, lsl #2]  
+	ldrltsb	r3, [r7, #1]
+	ldrltb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldrgtb	lr, [r7, r3]!
+	addle	r7, r7, r3 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule
+ nop
+ nop
+ nop
+	nop	
+impl_LCMP_IFGE  
+	cmp	r1, r3   
+	sbcs	r0, r2, r0   
+	ldrltb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrlt	pc, [r6, lr, lsl #2]  
+	ldrgesb	r3, [r7, #1]
+	ldrgeb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldrgtb	lr, [r7, r3]!
+	addle	r7, r7, r3 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule
+ nop
+ nop
+ nop
+	nop	
+impl_LCMP_IFGT  
+	cmp	r3, r1   
+	sbcs	r0, r0, r2   
+	ldrgeb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrge	pc, [r6, lr, lsl #2]  
+	ldrltsb	r3, [r7, #1]
+	ldrltb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldrgtb	lr, [r7, r3]!
+	addle	r7, r7, r3 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule
+ nop
+ nop
+ nop
+	nop	
+impl_LCMP_IFLE  
+	cmp	r3, r1   
+	sbcs	r0, r0, r2   
+	ldrltb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrlt	pc, [r6, lr, lsl #2]  
+	ldrgesb	r3, [r7, #1]
+	ldrgeb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldrgtb	lr, [r7, r3]!
+	addle	r7, r7, r3 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule
+ nop
+ nop
+ nop
+	nop	
+lcmp_normal
+	subs	r1, r1, r3  
+	sbcs	r2, r2, r0  
+	movlt	r0, #-1
+	movge	r0, #1            
+	ldral	lr, [r6, lr, lsl #2]  
+	orrs	r1, r1, r2     
+	moveq	r0, #0
+	moval	pc, lr    
+Addr_AliveThreadCount
+	IMPORT	AliveThreadCount
+	DCD	AliveThreadCount
+Addr_CurrentThread
+	IMPORT	CurrentThread
+	DCD	CurrentThread
+Addr_GlobalState
+	IMPORT	GlobalState
+	DCD	GlobalState
+Addr_PrimitiveArrayClasses
+	IMPORT	PrimitiveArrayClasses
+	DCD	PrimitiveArrayClasses
+Addr_thisObjectGCSafe
+	IMPORT	thisObjectGCSafe
+	DCD	thisObjectGCSafe
+Addr_Timeslice
+	IMPORT	Timeslice
+	DCD	Timeslice
+Addr_ArithmeticException
+	IMPORT	ArithmeticException
+	DCD	ArithmeticException
+Addr_ArrayIndexOutOfBoundsException
+	IMPORT	ArrayIndexOutOfBoundsException
+	DCD	ArrayIndexOutOfBoundsException
+Addr_ArrayStoreException
+	IMPORT	ArrayStoreException
+	DCD	ArrayStoreException
+Addr_ClassCastException
+	IMPORT	ClassCastException
+	DCD	ClassCastException
+Addr_NullPointerException
+	IMPORT	NullPointerException
+	DCD	NullPointerException
+Addr_restoreAndReschedule_s0
+	DCD	restoreAndReschedule_s0
+impl_IFEQ  
+impl_IFNULL  
+	cmp	r0, #0
+	ldrneb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrne	pc, [r6, lr, lsl #2]  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IFNE  
+impl_IFNONNULL  
+	cmp	r0, #0
+	ldreqb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldreq	pc, [r6, lr, lsl #2]  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IFLT  
+	cmp	r0, #0
+	ldrgeb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrge	pc, [r6, lr, lsl #2]  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IFGE  
+	cmp	r0, #0
+	ldrltb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrlt	pc, [r6, lr, lsl #2]  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IFGT  
+	cmp	r0, #0
+	ldrleb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrle	pc, [r6, lr, lsl #2]  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IFLE  
+	cmp	r0, #0
+	ldrgtb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IF_ICMPEQ  
+impl_IF_ACMPEQ  
+	ldr	r1, [r8], #-4 
+	ldrsb	r3, [r7, #1]
+	cmp	r1, r0 
+	ldrneb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrne	pc, [r6, lr, lsl #2]  
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IF_ICMPNE  
+impl_IF_ACMPNE  
+	ldr	r1, [r8], #-4 
+	ldrsb	r3, [r7, #1]
+	cmp	r1, r0 
+	ldreqb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldreq	pc, [r6, lr, lsl #2]  
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IF_ICMPLT  
+	ldr	r1, [r8], #-4 
+	ldrsb	r3, [r7, #1]
+	cmp	r1, r0 
+	ldrgeb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrge	pc, [r6, lr, lsl #2]  
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IF_ICMPGE  
+	ldr	r1, [r8], #-4 
+	ldrsb	r3, [r7, #1]
+	cmp	r1, r0 
+	ldrltb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrlt	pc, [r6, lr, lsl #2]  
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IF_ICMPGT  
+	ldr	r1, [r8], #-4 
+	ldrsb	r3, [r7, #1]
+	cmp	r1, r0 
+	ldrleb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrle	pc, [r6, lr, lsl #2]  
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_IF_ICMPLE  
+	ldr	r1, [r8], #-4 
+	ldrsb	r3, [r7, #1]
+	cmp	r1, r0 
+	ldrgtb	lr, [r7, #3]!
+	ldr	r0, [r8], #-4 
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ldrgt	pc, [r6, lr, lsl #2]  
+	ble	reschedule  
+impl_GOTO  
+	ldrsb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addals	r3, r12, r3, lsl #8  
+	ldralb	lr, [r7, r3]!
+	ble	reschedule
+	ldral	pc, [r6, lr, lsl #2]  
+impl_TABLESWITCH  
+	add	lr, r7, #4
+	mov	r4, #0xFF00
+	orr	r4, r4, r4, lsl #16 
+	bic	lr, lr, #3
+	ldmia	lr!, {r1, r2, r3}
+	and	r5, r4, r2, ror #8
+	and	r2, r4, r2, ror #16
+	orr	r2, r5, r2, lsr #8 
+	and	r5, r4, r3, ror #8
+	and	r3, r4, r3, ror #16
+	orr	r3, r5, r3, lsr #8 
+	cmp	r3, r0            
+	subges	r0, r0, r2        
+	ldrge	r1, [lr, r0, lsl #2]
+	and	r5, r4, r1, ror #8
+	and	r1, r4, r1, ror #16
+	adds	r1, r5, r1, lsr #8 
+	ldralb	lr, [r7, r1]!
+	ldr	r0, [r8], #-4 
+	ldrgt	lr, [r6, lr, lsl #2]  
+	ble	reschedule
+	movgt	pc, lr    
+impl_LOOKUPSWITCH  
+	mov	r4, #0xFF00
+	orr	r4, r4, r4, lsl #16 
+	bic	r12, r7, #3      
+	ldr	r1, [r12, #8]     
+	and	r5, r4, r1, ror #8
+	and	r1, r4, r1, ror #16
+	orr	r1, r5, r1, lsr #8 
+	add	r3, r12, #12  
+	sub	r1, r1, #1   
+1
+	cmp	r1, #0
+	blt	%f2
+	mov	r2, r1, asr #1
+	ldr	r12, [r3, r2, lsl #3]  
+	add	lr, r3, r2, lsl #3    
+	and	r5, r4, r12, ror #8
+	and	r12, r4, r12, ror #16
+	orr	r12, r5, r12, lsr #8 
+	cmp	r12, r0                 
+	subgt	r1, r2, #1
+	addlt	r3, lr, #8
+	rsblt	lr, r2, r1  
+	sublt	r1, lr, #1
+	bne	%b1
+2
+	biclt	lr, r7, #3
+	ldr	r12, [lr, #4]       
+	and	r5, r4, r12, ror #8
+	and	r12, r4, r12, ror #16
+	adds	r12, r5, r12, lsr #8 
+	ldralb	lr, [r7, r12]!
+	ldr	r0, [r8], #-4 
+	ldrgt	lr, [r6, lr, lsl #2]  
+	ble	reschedule
+	movgt	pc, lr    
+impl_RETURN  
+	ldr	r1, [r11, #20] 
+	cmp	r1, #0
+	bne	%f2
+1
+	ldr	r12, [r11, #4] 
+	cmp	r12, #0x1 
+	beq	return_killThread
+	ldmia	r11, {r3, r7, r8}
+	ldr	lr, [r3, #12] 
+	mov	r11, r3 
+	ldrh	r2, [lr, #28] 
+	ldr	r12, [lr, #24] 
+	sub	r9, r11, r2, lsl #2
+	ldr	r10, [r12, #28] 
+	ldr	r0, [r8], #-4   
+	b	reschedule
+2
+	IMPORT	monitorExit
+	mov	r0, r1 
+	mov	r1, sp
+	bl	monitorExit
+	cmp	r0, #0x3 
+	bne	%b1
+	ldr	r0, [sp]
+	b	handleException
+impl_IRETURN  
+impl_ARETURN  
+	ldr	r1, [r11, #20] 
+	cmp	r1, #0
+	bne	%f2
+1
+	ldr	r12, [r11, #4] 
+	cmp	r12, #0x1 
+	beq	return_killThread
+	ldmia	r11, {r3, r7, r8}
+	ldr	lr, [r3, #12] 
+	mov	r11, r3 
+	ldrh	r2, [lr, #28] 
+	ldr	r12, [lr, #24] 
+	sub	r9, r11, r2, lsl #2
+	ldr	r10, [r12, #28] 
+	b	reschedule
+2
+	IMPORT	monitorExit
+	moval	r4, r0  
+	mov	r0, r1 
+	mov	r1, sp
+	bl	monitorExit
+	cmp	r0, #0x3 
+	movne	r0, r4  
+	bne	%b1
+	ldr	r0, [sp]
+	b	handleException
+impl_LRETURN  
+	ldr	r5, [r8], #-4   
+	ldr	r1, [r11, #20] 
+	cmp	r1, #0
+	bne	%f2
+1
+	ldr	r12, [r11, #4] 
+	cmp	r12, #0x1 
+	beq	return_killThread
+	ldmia	r11, {r3, r7, r8}
+	ldr	lr, [r3, #12] 
+	mov	r11, r3 
+	ldrh	r2, [lr, #28] 
+	ldr	r12, [lr, #24] 
+	sub	r9, r11, r2, lsl #2
+	ldr	r10, [r12, #28] 
+	str	r5, [r8, #4]!
+	b	reschedule
+2
+	IMPORT	monitorExit
+	moval	r4, r0  
+	mov	r0, r1 
+	mov	r1, sp
+	bl	monitorExit
+	cmp	r0, #0x3 
+	movne	r0, r4  
+	bne	%b1
+	ldr	r0, [sp]
+	b	handleException
+return_killThread
+	IMPORT	stopThread
+	ldr	r4, Addr_GlobalState
+	ldr	r5, Addr_AliveThreadCount
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	stopThread
+	ldr	r0, [r5]         
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	cmp	r0, #0
+	bgt	reschedule
+	ldmlefd	sp!, {r1-r3, r4-r11, pc} 
+impl_NEWARRAY  
+	IMPORT	instantiateArray
+	mov	r1, r0            
+	ldr	r3, Addr_PrimitiveArrayClasses
+	ldrb	r2, [r7, #1]  
+	ldr	r4, Addr_GlobalState
+	ldr	r0, [r3, r2, lsl #2]  
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	instantiateArray
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	ldralb	lr, [r7, #2]!
+	cmp	r0, #0
+	ldrne	pc, [r6, lr, lsl #2]  
+	add	r7, r7, #-2
+	ldr	r0, [r8], #-4   
+	b	reschedule
+impl_ARRAYLENGTH  
+	ldralb	lr, [r7, #1]!
+	cmp	r0, #0
+	ldrne	lr, [r6, lr, lsl #2]  
+	ldrne	r0, [r0, #8] 
+	movne	pc, lr    
+	add	r7, r7, #-1
+	b	handleNullPointerException
+impl_ATHROW  
+	IMPORT	throwException
+	cmp	r0, #0
+	beq	handleNullPointerException
+	ldr	r5, Addr_thisObjectGCSafe
+	ldr	r4, Addr_GlobalState
+	str	r0, [r5]         
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	mov	r0, r5 
+	bl	throwException
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	mov	r1, #0
+	str	r1, [r5]
+	ldr	r0, [r8], #-4                  
+	b	reschedule
+impl_MONITORENTER  
+	IMPORT	monitorEnter
+	cmp	r0, #0
+	addne	r7, r7, #1
+	ldrne	r4, Addr_GlobalState
+	ldrne	lr, Addr_restoreAndReschedule_s0  
+	stmneia	r4, {r7, r8, r9, r10, r11}  
+	bne	monitorEnter  
+	b	handleNullPointerException
+impl_MONITOREXIT  
+	IMPORT	monitorExit
+	cmp	r0, #0
+	beq	handleNullPointerException
+	add	r7, r7, #1  
+	mov	r1, sp
+	bl	monitorExit
+	cmp	r0, #0x3 
+	ldrne	r0, [r8], #-4           
+	bne	reschedule
+	ldr	r0, [sp]
+	b	handleException
+impl_WIDE  
+	ldrb	r4, [r7, #1]     
+	ldrb	r3, [r7, #2]     
+	ldrb	r12, [r7, #3]     
+	ldr	r4, [r6, r4, lsl #2] 
+	addal	r3, r12, r3, lsl #8  
+	ldr	pc, [r4, #-4]
+impl_GOTO_W  
+	ldrsb	r1, [r7, #1]      
+	ldrb	r2, [r7, #2]
+	ldrb	r3, [r7, #3]
+	ldrb	r12, [r7, #4]
+	addal	r1, r2, r1, lsl #8  
+	addal	r3, r12, r3, lsl #8  
+	adds	r1, r3, r1, lsl #16
+	ldralb	lr, [r7, r1]!
+	ble	reschedule
+	ldral	pc, [r6, lr, lsl #2]  
+impl_BREAKPOINT  
+	IMPORT	fatalError
+	adrl	r0, Msg_BreakPoint
+	bl	fatalError
+impl_GETFIELD_FAST  
+impl_GETFIELDP_FAST  
+	cmp	r0, #0
+	ldrneb	lr, [r7, #3]!
+	ldrneb	r3, [r7, #-2]         
+	ldrneb	r12, [r7, #-1]         
+	addne	r0, r0, #8 
+	ldrne	lr, [r6, lr, lsl #2]  
+	addne	r3, r12, r3, lsl #8 
+	ldrne	r0, [r0, r3, lsl #2]
+	movne	pc, lr    
+	b	handleNullPointerException
+impl_GETFIELD2_FAST  
+	cmp	r0, #0
+	ldrneb	lr, [r7, #3]!
+	ldrneb	r3, [r7, #-2]         
+	ldrneb	r12, [r7, #-1]        
+	addne	r0, r0, #8 
+	addne	r3, r12, r3, lsl #8 
+	ldrne	lr, [r6, lr, lsl #2]  
+	ldrne	r1, [r0, r3, lsl #2]!
+	ldrne	r0, [r0, #4]
+	strne	r1, [r8, #4]!
+	movne	pc, lr    
+	b	handleNullPointerException
+impl_PUTFIELD_FAST  
+	mov	r2, r0 
+	ldr	r1, [r8], #-4 
+	ldr	r0, [r8], #-4 
+	cmp	r1, #0
+	ldrneb	r3, [r7, #1]         
+	ldrneb	r12, [r7, #2]         
+	ldrneb	lr, [r7, #3]!
+	addne	r1, r1, #8 
+	ldrne	lr, [r6, lr, lsl #2]  
+	addne	r3, r12, r3, lsl #8 
+	strne	r2, [r1, r3, lsl #2]
+	movne	pc, lr    
+	b	handleNullPointerException
+impl_PUTFIELD2_FAST  
+	mov	r4, r0 
+	ldmfa	r8!, {r0 - r2}                       
+	cmp	r1, #0
+	ldrneb	r3, [r7, #1]         
+	ldrneb	r12, [r7, #2]         
+	ldrneb	lr, [r7, #3]!
+	addne	r1, r1, #8 
+	addne	r3, r12, r3, lsl #8 
+	ldrne	lr, [r6, lr, lsl #2]  
+	strne	r2, [r1, r3, lsl #2]!
+	strne	r4, [r1, #4]
+	movne	pc, lr    
+	b	handleNullPointerException
+impl_GETSTATIC_FAST  
+impl_GETSTATICP_FAST  
+	ldrb	r3, [r7, #1]         
+	ldrb	r12, [r7, #2]         
+	str	r0, [r8, #4]!
+	addal	r3, r12, r3, lsl #8  
+	ldr	r1, [r10, r3, lsl #2]  
+	ldr	r2, [r1, #8] 
+	ldr	lr, Addr_CurrentThread 
+	ldrsh	r12, [r2, #50] 
+	ldr	lr, [lr]
+	cmp	r12, #0x5 
+	ldrne	r12, [r2, #52] 
+	cmpne	r12, lr 
+	bne	%f9  
+	ldralb	lr, [r7, #3]!
+	ldr	r2, [r1, #12] 
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r2]
+	moval	pc, lr    
+	IMPORT	initializeClass 
+9
+	mov	r0, r2  
+	ldral	r4, Addr_GlobalState
+	ldral	lr, Addr_restoreAndReschedule_s0  
+	stmalia	r4, {r7, r8, r9, r10, r11}  
+	bal	initializeClass      
+impl_GETSTATIC2_FAST  
+	ldrb	r3, [r7, #1]         
+	ldrb	r12, [r7, #2]         
+	str	r0, [r8, #4]!
+	addal	r3, r12, r3, lsl #8  
+	ldr	r1, [r10, r3, lsl #2]  
+	ldr	r2, [r1, #8] 
+	ldr	lr, Addr_CurrentThread 
+	ldrsh	r12, [r2, #50] 
+	ldr	lr, [lr]
+	cmp	r12, #0x5 
+	ldrne	r12, [r2, #52] 
+	cmpne	r12, lr 
+	bne	%f9 
+	ldr	r2, [r1, #12] 
+	ldralb	lr, [r7, #3]!
+	ldr	r1, [r2]
+	ldral	lr, [r6, lr, lsl #2]  
+	ldr	r0, [r2, #4]
+	str	r1, [r8, #4]!
+	moval	pc, lr    
+	IMPORT	initializeClass 
+9
+	mov	r0, r2  
+	ldral	r4, Addr_GlobalState
+	ldral	lr, Addr_restoreAndReschedule_s0  
+	stmalia	r4, {r7, r8, r9, r10, r11}  
+	bal	initializeClass     
+impl_PUTSTATIC_FAST  
+	ldrb	r3, [r7, #1]         
+	ldrb	r12, [r7, #2]         
+	addal	r3, r12, r3, lsl #8  
+	ldr	r1, [r10, r3, lsl #2]  
+	ldr	r2, [r1, #8] 
+	ldr	lr, Addr_CurrentThread 
+	ldrsh	r12, [r2, #50] 
+	ldr	lr, [lr]
+	cmp	r12, #0x5 
+	ldrne	r12, [r2, #52] 
+	cmpne	r12, lr 
+	bne	%f9 
+	ldralb	lr, [r7, #3]!
+	ldr	r2, [r1, #12] 
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r0, [r2]
+	ldr	r0, [r8], #-4 
+	moval	pc, lr    
+	IMPORT	initializeClass 
+9
+	mov	r0, r2  
+	ldral	r4, Addr_GlobalState
+	ldral	lr, Addr_restoreAndReschedule_s0  
+	stmalia	r4, {r7, r8, r9, r10, r11}  
+	bal	initializeClass     
+impl_PUTSTATIC2_FAST  
+	ldrb	r3, [r7, #1]         
+	ldrb	r12, [r7, #2]         
+	addal	r3, r12, r3, lsl #8  
+	ldr	r1, [r10, r3, lsl #2]  
+	ldr	r2, [r1, #8] 
+	ldr	lr, Addr_CurrentThread 
+	ldrsh	r12, [r2, #50] 
+	ldr	lr, [lr]
+	cmp	r12, #0x5 
+	ldrne	r12, [r2, #52] 
+	cmpne	r12, lr 
+	bne	%f9 
+	ldralb	lr, [r7, #3]!
+	ldr	r2, [r1, #12] 
+	ldr	r1, [r8], #-4 	
+	str	r0, [r2, #4]
+	ldral	lr, [r6, lr, lsl #2]  
+	str	r1, [r2]    
+	ldr	r0, [r8], #-4 
+	moval	pc, lr    
+	IMPORT	initializeClass 
+9
+	mov	r0, r2  
+	ldral	r4, Addr_GlobalState
+	ldral	lr, Addr_restoreAndReschedule_s0  
+	stmalia	r4, {r7, r8, r9, r10, r11}  
+	bal	initializeClass     
+impl_MULTIANEWARRAY_FAST  
+	IMPORT	instantiateMultiArray
+	ldrb	r3, [r7, #1]  
+	ldrb	r12, [r7, #2]  
+	str	r0, [r8, #4]!
+	ldrb	r2, [r7, #3]  
+	addal	r3, r12, r3, lsl #8      
+	ldr	r0, [r10, r3, lsl #2]  
+	sub	r5, r8, r2, lsl #2  
+	ldr	r4, Addr_GlobalState
+	add	r1, r5, #4
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	instantiateMultiArray
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	cmp	r0, #0
+	ldrneb	lr, [r7, #4]!
+	ldreq	r0, [r8], #-4 		 
+	ldrne	lr, [r6, lr, lsl #2]  
+	movne	r8, r5        
+	movne	pc, lr    
+	beq	reschedule
+impl_CHECKCAST_FAST  
+	IMPORT	isAssignableTo
+	IMPORT	isAssignableToFast
+	cmp	r0, #0
+	ldreqb	lr, [r7, #3]!
+	ldreq	pc, [r6, lr, lsl #2]  
+	str	r0, [r8, #4]!
+	ldr	r4, [r0, #0]     
+	ldrb	r3, [r7, #1]
+	ldrb	r12, [r7, #2]
+	addal	r1, r12, r3, lsl #8         
+	ldr	r5, [r10, r1, lsl #2]  
+	mov	r0, r4 
+	mov	r1, r5 
+	bl	isAssignableToFast
+	cmp	r0, #0
+	ldrneb	lr, [r7, #3]!
+	ldrne	r0, [r8], #-4 
+	ldrne	pc, [r6, lr, lsl #2]  
+	mov	r0, r4 
+	ldr	r4, Addr_GlobalState
+	mov	r1, r5 
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	isAssignableTo
+	cmp	r0, #0
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	ldrneb	lr, [r7, #3]!
+	ldrne	r0, [r8], #-4 
+	ldrne	pc, [r6, lr, lsl #2]  
+	ldr	r0, Addr_ClassCastException
+	b	handleException
+impl_INSTANCEOF_FAST  
+	IMPORT	isAssignableToFast
+	IMPORT	isAssignableTo
+	cmp	r0, #0             
+	ldreqb	lr, [r7, #3]!
+	ldreq	pc, [r6, lr, lsl #2]                  
+	ldr	r4, [r0, #0] 
+	ldrb	r3, [r7, #1]   
+	ldrb	r12, [r7, #2]   
+	addal	r1, r12, r3, lsl #8       
+	ldr	r5, [r10, r1, lsl #2]  
+	mov	r0, r4 
+	mov	r1, r5 
+	bl	isAssignableToFast
+	cmp	r0, #0
+	ldrneb	lr, [r7, #3]!
+	movne	r0, #1
+	ldrne	pc, [r6, lr, lsl #2]  
+1
+	mov	r0, r4 
+	ldr	r4, Addr_GlobalState
+	mov	r1, r5 
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	isAssignableTo
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	ldralb	lr, [r7, #3]!
+	cmp	r0, #0
+	ldral	lr, [r6, lr, lsl #2]  
+	movne	r0, #1
+	moval	pc, lr    
+impl_CUSTOMCODE  
+	str	r0, [r8, #4]!
+	ldr	r4, Addr_GlobalState
+	mov	r0, #0
+	ldr	r1, [r11, #24]    
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	ldral	lr, Addr_restoreAndReschedule_s0    
+	mov	pc, r1 
+	DCD	impl_wide_FLOAD  
+impl_FLOAD  
+impl_DLOAD  
+impl_FSTORE  
+impl_DSTORE  
+impl_INVOKEVIRTUAL_FAST  
+impl_INVOKESPECIAL_FAST  
+impl_INVOKESTATIC_FAST  
+impl_INVOKEINTERFACE_FAST  
+impl_NEW_FAST  
+impl_ANEWARRAY_FAST  
+impl_GETSTATIC  
+impl_PUTSTATIC  
+impl_GETFIELD  
+impl_PUTFIELD  
+impl_INVOKEVIRTUAL  
+impl_INVOKESPECIAL  
+impl_INVOKESTATIC  
+impl_INVOKEINTERFACE  
+impl_NEW  
+impl_ANEWARRAY  
+impl_CHECKCAST  
+impl_INSTANCEOF  
+impl_MULTIANEWARRAY  
+impl_JSR  
+impl_RET  
+impl_UNUSED_BA  
+impl_JSR_W  
+impl_UNUSED_D5  
+impl_FCONST_0  
+impl_FCONST_1  
+impl_FCONST_2  
+impl_DCONST_0  
+impl_DCONST_1  
+impl_FLOAD_0  
+impl_FLOAD_1  
+impl_FLOAD_2  
+impl_FLOAD_3  
+impl_DLOAD_0  
+impl_DLOAD_1  
+impl_DLOAD_2  
+impl_DLOAD_3  
+impl_FALOAD  
+impl_DALOAD  
+impl_FSTORE_0  
+impl_FSTORE_1  
+impl_FSTORE_2  
+impl_FSTORE_3  
+impl_DSTORE_0  
+impl_DSTORE_1  
+impl_DSTORE_2  
+impl_DSTORE_3  
+impl_FASTORE  
+impl_DASTORE  
+impl_FADD  
+impl_DADD  
+impl_FSUB  
+impl_DSUB  
+impl_FMUL  
+impl_DMUL  
+impl_FDIV  
+impl_DDIV  
+impl_FREM  
+impl_DREM  
+impl_FNEG  
+impl_DNEG  
+impl_I2F  
+impl_I2D  
+impl_L2F  
+impl_L2D  
+impl_F2I  
+impl_F2L  
+impl_F2D  
+impl_D2I  
+impl_D2L  
+impl_D2F  
+impl_FCMPL  
+impl_FCMPG  
+impl_DCMPL  
+impl_DCMPG  
+impl_FRETURN  
+impl_DRETURN  
+impl_wide_FLOAD  
+impl_wide_DLOAD  
+impl_wide_FSTORE  
+impl_wide_DSTORE  
+illegal
+	IMPORT	SlowInterpret
+	str	r0, [r8, #4]!
+	ldrb	r0, [r7]
+	ldral	r4, Addr_GlobalState
+	ldral	lr, Addr_restoreAndReschedule_s0  
+	stmalia	r4, {r7, r8, r9, r10, r11}  
+	bal	SlowInterpret    
+callGeneral
+	ldr	r3, [r0, #20] 
+	tst	r3, #(0x100  | 0x400 )
+	bne	callNativeAbstract
+	mov	r6, r0            
+	mov	r4, r1            
+	ldrh	r1, [r6, #28]    
+	ldrh	r2, [r6, #30]     
+	ldr	r3, [r11, #16]     
+	ldrh	r12, [r6, #18]     
+	add	r12, r12, r1 
+	sub	r12, r12, r2 
+	add	r12, r12, #(6  + 0x3 )
+	ldrsh	lr, [r3, #4]         
+	sub	r0, r8, r3         
+	sub	r0, r0, #8 
+	add	r0, r0, r12, lsl #2
+	cmp	r0, lr, lsl #2
+	bge	hardPushFrame
+	sub	r0, r8, r2, lsl #2   
+	add	r9, r0, #4           
+	str	r11, [r9, r1, lsl #2]
+	add	r11, r9, r1, lsl #2
+	add	r7, r7, r5        
+	str	r7, [r11, #4] 
+	str	r0, [r11, #8] 
+	str	r3, [r11, #16] 
+	str	r6, [r11, #12] 
+	ldr	r1, [r6, #24] 
+	ldr	r7, [r6, #4] 
+	ldr	r10, [r1, #28] 
+pushFrameContinue
+	ldr	r0, [r6, #20] 
+	adr	r6, JumpTable         
+	tst	r0, #0x20 
+	mov	r0, #0
+	str	r0, [r11, #20] 
+	add	r8, r11, #(24  - 8)	
+	beq	reschedule
+	ldr	r1, [r4, #4] 
+	ldr	r2, Addr_CurrentThread
+	cmp	r1, #0
+	ldreq	r2, [r2]
+	streq	r4, [r11, #20] 
+	addeq	r2, r2, #0x1 
+	streq	r2, [r4, #4] 
+	beq	reschedule
+	IMPORT	monitorEnter
+	add	r8, r8, #4      
+	mov	r0, r4 
+	ldr	r5, Addr_thisObjectGCSafe
+	ldr	r4, Addr_GlobalState
+	str	r0, [r5]         
+	stmia	r4, {r7, r8, r9, r10, r11}  
+	bl	monitorEnter
+	ldmia	r4, {r7, r8, r9, r10, r11}  
+	ldr	r0, [r5]         
+	mov	r1, #0           
+	str	r1, [r5]
+	str	r0, [r11, #20] 
+	sub	r8, r8, #4
+	b	reschedule
+hardPushFrame
+	IMPORT	pushFrame
+	ldr	r1, Addr_GlobalState
+	mov	r0, r6            
+	stmia	r1, {r7, r8, r9, r10, r11}  
+	ldr	r7, Addr_thisObjectGCSafe
+	mov	r8, r1            
+	str	r4, [r7]         
+	bl	pushFrame        
+	mov	r1, #0
+	ldr	r4, [r7]
+	str	r1, [r7]
+	cmp	r0, #0
+	ldmia	r8, {r7, r8, r9, r10, r11}              
+	ldrne	r0, [r11, #4] 
+	addne	r0, r0, r5 
+	strne	r0, [r11, #4] 
+	ldrne	r3, [r6, #20] 
+	bne	pushFrameContinue
+	adr	r6, JumpTable
+	ldr	r0, [r8], #-4 
+	beq	reschedule
+callNativeAbstract
+	IMPORT	invokeNativeFunction
+	IMPORT	fatalError
+	tst	r3, #0x400 
+	addeq	r7, r5, r7 
+	ldreq	r4, Addr_GlobalState
+	ldreq	lr, Addr_restoreAndReschedule_s0  
+	stmeqia	r4, {r7, r8, r9, r10, r11}  
+	beq	invokeNativeFunction  
+	adr	r0, Msg_Abstract
+	bl	fatalError       
+handleNullPointerException
+	ldr	r0, Addr_NullPointerException
+	b	handleException
+handleArrayIndexOutOfBoundsException
+	ldr	r0, Addr_ArrayIndexOutOfBoundsException
+	b	handleException
+handleDivideByZeroException
+	ldr	r0, Addr_ArithmeticException
+	b	handleException
+handleArrayStoreException
+	ldr	r0, Addr_ArrayStoreException
+	b	handleException
+handleException
+	IMPORT	raiseException
+	ldral	r4, Addr_GlobalState
+	ldral	lr, Addr_restoreAndReschedule_s0  
+	stmalia	r4, {r7, r8, r9, r10, r11}  
+	bal	raiseException    
+Msg_BreakPoint
+	DCB	"Breakpoint\n" 
+	DCB	0
+Msg_Abstract
+	DCB	"Abstract method invoked" 
+	DCB	0
+Msg_IllegalWide
+	DCB	"Illegal WIDE bytecode extension" 
+	DCB	0
+JumpTable
+	DCD	impl_NOP   
+	DCD	impl_ACONST_NULL   
+	DCD	impl_ICONST_M1   
+	DCD	impl_ICONST_0   
+	DCD	impl_ICONST_1   
+	DCD	impl_ICONST_2   
+	DCD	impl_ICONST_3   
+	DCD	impl_ICONST_4   
+	DCD	impl_ICONST_5   
+	DCD	impl_LCONST_0   
+	DCD	impl_LCONST_1   
+	DCD	impl_FCONST_0   
+	DCD	impl_FCONST_1   
+	DCD	impl_FCONST_2   
+	DCD	impl_DCONST_0   
+	DCD	impl_DCONST_1   
+	DCD	impl_BIPUSH   
+	DCD	impl_SIPUSH   
+	DCD	impl_LDC   
+	DCD	impl_LDC_W   
+	DCD	impl_LDC2_W   
+	DCD	impl_ILOAD   
+	DCD	impl_LLOAD   
+	DCD	impl_FLOAD   
+	DCD	impl_DLOAD   
+	DCD	impl_ALOAD   
+	DCD	impl_ILOAD_0   
+	DCD	impl_ILOAD_1   
+	DCD	impl_ILOAD_2   
+	DCD	impl_ILOAD_3   
+	DCD	impl_LLOAD_0   
+	DCD	impl_LLOAD_1   
+	DCD	impl_LLOAD_2   
+	DCD	impl_LLOAD_3   
+	DCD	impl_FLOAD_0   
+	DCD	impl_FLOAD_1   
+	DCD	impl_FLOAD_2   
+	DCD	impl_FLOAD_3   
+	DCD	impl_DLOAD_0   
+	DCD	impl_DLOAD_1   
+	DCD	impl_DLOAD_2   
+	DCD	impl_DLOAD_3   
+	DCD	impl_ALOAD_0   
+	DCD	impl_ALOAD_1   
+	DCD	impl_ALOAD_2   
+	DCD	impl_ALOAD_3   
+	DCD	impl_IALOAD   
+	DCD	impl_LALOAD   
+	DCD	impl_FALOAD   
+	DCD	impl_DALOAD   
+	DCD	impl_AALOAD   
+	DCD	impl_BALOAD   
+	DCD	impl_CALOAD   
+	DCD	impl_SALOAD   
+	DCD	impl_ISTORE   
+	DCD	impl_LSTORE   
+	DCD	impl_FSTORE   
+	DCD	impl_DSTORE   
+	DCD	impl_ASTORE   
+	DCD	impl_ISTORE_0   
+	DCD	impl_ISTORE_1   
+	DCD	impl_ISTORE_2   
+	DCD	impl_ISTORE_3   
+	DCD	impl_LSTORE_0   
+	DCD	impl_LSTORE_1   
+	DCD	impl_LSTORE_2   
+	DCD	impl_LSTORE_3   
+	DCD	impl_FSTORE_0   
+	DCD	impl_FSTORE_1   
+	DCD	impl_FSTORE_2   
+	DCD	impl_FSTORE_3   
+	DCD	impl_DSTORE_0   
+	DCD	impl_DSTORE_1   
+	DCD	impl_DSTORE_2   
+	DCD	impl_DSTORE_3   
+	DCD	impl_ASTORE_0   
+	DCD	impl_ASTORE_1   
+	DCD	impl_ASTORE_2   
+	DCD	impl_ASTORE_3   
+	DCD	impl_IASTORE   
+	DCD	impl_LASTORE   
+	DCD	impl_FASTORE   
+	DCD	impl_DASTORE   
+	DCD	impl_AASTORE   
+	DCD	impl_BASTORE   
+	DCD	impl_CASTORE   
+	DCD	impl_SASTORE   
+	DCD	impl_POP   
+	DCD	impl_POP2   
+	DCD	impl_DUP   
+	DCD	impl_DUP_X1   
+	DCD	impl_DUP_X2   
+	DCD	impl_DUP2   
+	DCD	impl_DUP2_X1   
+	DCD	impl_DUP2_X2   
+	DCD	impl_SWAP   
+	DCD	impl_IADD   
+	DCD	impl_LADD   
+	DCD	impl_FADD   
+	DCD	impl_DADD   
+	DCD	impl_ISUB   
+	DCD	impl_LSUB   
+	DCD	impl_FSUB   
+	DCD	impl_DSUB   
+	DCD	impl_IMUL   
+	DCD	impl_LMUL   
+	DCD	impl_FMUL   
+	DCD	impl_DMUL   
+	DCD	impl_IDIV   
+	DCD	impl_LDIV   
+	DCD	impl_FDIV   
+	DCD	impl_DDIV   
+	DCD	impl_IREM   
+	DCD	impl_LREM   
+	DCD	impl_FREM   
+	DCD	impl_DREM   
+	DCD	impl_INEG   
+	DCD	impl_LNEG   
+	DCD	impl_FNEG   
+	DCD	impl_DNEG   
+	DCD	impl_ISHL   
+	DCD	impl_LSHL   
+	DCD	impl_ISHR   
+	DCD	impl_LSHR   
+	DCD	impl_IUSHR   
+	DCD	impl_LUSHR   
+	DCD	impl_IAND   
+	DCD	impl_LAND   
+	DCD	impl_IOR   
+	DCD	impl_LOR   
+	DCD	impl_IXOR   
+	DCD	impl_LXOR   
+	DCD	impl_IINC   
+	DCD	impl_I2L   
+	DCD	impl_I2F   
+	DCD	impl_I2D   
+	DCD	impl_L2I   
+	DCD	impl_L2F   
+	DCD	impl_L2D   
+	DCD	impl_F2I   
+	DCD	impl_F2L   
+	DCD	impl_F2D   
+	DCD	impl_D2I   
+	DCD	impl_D2L   
+	DCD	impl_D2F   
+	DCD	impl_I2B   
+	DCD	impl_I2C   
+	DCD	impl_I2S   
+	DCD	impl_LCMP   
+	DCD	impl_FCMPL   
+	DCD	impl_FCMPG   
+	DCD	impl_DCMPL   
+	DCD	impl_DCMPG   
+	DCD	impl_IFEQ   
+	DCD	impl_IFNE   
+	DCD	impl_IFLT   
+	DCD	impl_IFGE   
+	DCD	impl_IFGT   
+	DCD	impl_IFLE   
+	DCD	impl_IF_ICMPEQ   
+	DCD	impl_IF_ICMPNE   
+	DCD	impl_IF_ICMPLT   
+	DCD	impl_IF_ICMPGE   
+	DCD	impl_IF_ICMPGT   
+	DCD	impl_IF_ICMPLE   
+	DCD	impl_IF_ACMPEQ   
+	DCD	impl_IF_ACMPNE   
+	DCD	impl_GOTO   
+	DCD	impl_JSR   
+	DCD	impl_RET   
+	DCD	impl_TABLESWITCH   
+	DCD	impl_LOOKUPSWITCH   
+	DCD	impl_IRETURN   
+	DCD	impl_LRETURN   
+	DCD	impl_FRETURN   
+	DCD	impl_DRETURN   
+	DCD	impl_ARETURN   
+	DCD	impl_RETURN   
+	DCD	impl_GETSTATIC   
+	DCD	impl_PUTSTATIC   
+	DCD	impl_GETFIELD   
+	DCD	impl_PUTFIELD   
+	DCD	impl_INVOKEVIRTUAL   
+	DCD	impl_INVOKESPECIAL   
+	DCD	impl_INVOKESTATIC   
+	DCD	impl_INVOKEINTERFACE   
+	DCD	impl_UNUSED_BA   
+	DCD	impl_NEW   
+	DCD	impl_NEWARRAY   
+	DCD	impl_ANEWARRAY   
+	DCD	impl_ARRAYLENGTH   
+	DCD	impl_ATHROW   
+	DCD	impl_CHECKCAST   
+	DCD	impl_INSTANCEOF   
+	DCD	impl_MONITORENTER   
+	DCD	impl_MONITOREXIT   
+	DCD	impl_WIDE   
+	DCD	impl_MULTIANEWARRAY   
+	DCD	impl_IFNULL   
+	DCD	impl_IFNONNULL   
+	DCD	impl_GOTO_W   
+	DCD	impl_JSR_W   
+	DCD	impl_BREAKPOINT   
+	DCD	impl_GETFIELD_FAST   
+	DCD	impl_GETFIELDP_FAST   
+	DCD	impl_GETFIELD2_FAST   
+	DCD	impl_PUTFIELD_FAST   
+	DCD	impl_PUTFIELD2_FAST   
+	DCD	impl_GETSTATIC_FAST   
+	DCD	impl_GETSTATICP_FAST   
+	DCD	impl_GETSTATIC2_FAST   
+	DCD	impl_PUTSTATIC_FAST   
+	DCD	impl_PUTSTATIC2_FAST   
+	DCD	impl_UNUSED_D5   
+	DCD	impl_INVOKEVIRTUAL_FAST   
+	DCD	impl_INVOKESPECIAL_FAST   
+	DCD	impl_INVOKESTATIC_FAST   
+	DCD	impl_INVOKEINTERFACE_FAST   
+	DCD	impl_NEW_FAST   
+	DCD	impl_ANEWARRAY_FAST   
+	DCD	impl_MULTIANEWARRAY_FAST   
+	DCD	impl_CHECKCAST_FAST   
+	DCD	impl_INSTANCEOF_FAST   
+	DCD	impl_CUSTOMCODE   
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+	DCD	illegal
+        END
